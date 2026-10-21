@@ -30,16 +30,20 @@ no cast shadow, no reflections, no props
 ### 1.3 負面描述 `NEGATIVE`
 
 ```text
-photorealistic, photo scan, realistic texture, greasy, glossy oil, wet shine, noisy texture,
-dirt, burnt, multiple objects, plate, bowl, table, chopsticks, hands, background scene,
-steam, smoke, text, logo, watermark, cut off, cropped, blurry, low quality
+photorealistic, photo scan, greasy, glossy oil, wet shine, noisy texture, dirt, burnt,
+multiple objects, plate, bowl, table, chopsticks, hands, background, steam, text, logo,
+watermark, cropped, blurry, low quality
 ```
 
-> 生成**容器**時，要從 `NEGATIVE` 拿掉 `plate, bowl`；生成**食物**時保留，避免連盤子一起生成。
+> 生成**容器**時，要從 `NEGATIVE` 拿掉 `plate, bowl`，改加 `food, soup, liquid`；生成**食物**時保留，避免連盤子一起生成。
+>
+> **長度限制（官方）：** Tripo 的 `prompt` 最多 1024 字元、`negative_prompt` 最多 255 字元。上面的 NEGATIVE 約 200 字元，自己加詞時不要超過 255。
 
 ---
 
-## 2. 參考圖 prompt（步驟 ②，貼到圖像生成工具）
+## 2. 參考圖 prompt（步驟 ②，用 Tripo 文生圖或其他圖像生成工具）
+
+用 Tripo 的 `POST /v3/generation/text-to-image` 時，`Negative:` 之前的內容放進 `prompt`，`Negative:` 之後的內容放進負面描述欄位（如果該模型支援），不支援就省略。
 
 ### 2.1 食物範本
 
@@ -67,14 +71,16 @@ Negative: {NEGATIVE 拿掉 plate, bowl}, food, soup, liquid, noodles
 
 ### 2.3 多視角（步驟 ② 的 3.3，背面複雜時）
 
-先用 2.1 做出正面圖，再用同一個工具「以這張圖為參考」生成其他視角：
+**建議做法：** 用 2.1 做出正面圖後，直接呼叫 Tripo 的 `POST /v3/generation/image-to-multiview`（10 點）自動產生四個視角，不需要另外寫 prompt；某個視角不對時，用 Edit Multiview（每張 5 點）修正。
+
+如果用其他圖像工具，以正面圖為參考，用下面的 prompt 生成其他視角：
 
 ```text
 same object as the reference image, identical style, size, colors and lighting,
 {view} view, orthographic camera, plain pure white background, no shadow
 ```
 
-`{view}` 依序填 `left side`、`back`、`right side`。四張圖的物件大小要一致；不一致就重新生成，不要硬塞給 Tripo。
+`{view}` 依序填 `left side`、`back`、`right side`。四張圖的物件大小要一致；不一致就重新生成，不要硬塞給 Tripo。多視角生 3D 至少要 2 張（正面必填）。
 
 ---
 
@@ -87,14 +93,14 @@ game-ready low poly prop, closed watertight mesh, solid object
 
 `negative_prompt` 欄位填 `NEGATIVE`。
 
-## 4. Tripo 重新上貼圖 prompt（`texture_model` 的 `text_prompt`）
+## 4. Tripo 重新上貼圖 prompt（`POST /v3/models/texture` 的文字提示）
 
 ```text
 {STYLE}, {物件英文名}, {顏色重點}, flat hand-painted albedo colors, no baked shadows,
 no baked highlights, no ambient occlusion darkening, even lighting
 ```
 
-> 用途：模型造型滿意但貼圖有烘進去的陰影、太寫實或太油時使用。
+> 用途：模型造型滿意，但貼圖有烘進去的陰影、太寫實或太油時使用。先試試把貼圖模型設為 `v3.5-20260815` 並開啟 `delight`（去除參考圖的光影），通常就能解決陰影問題。
 
 ---
 
@@ -125,9 +131,9 @@ irregular rounded cube shape, a soft translucent tendon layer on one side, sligh
 warm reddish brown with lighter beige tendon stripe, flat stable bottom, single object only,
 centered, full object visible, occupies 75% of the frame, 3/4 top-down view at 30 degrees,
 plain pure white background, soft even studio lighting, no cast shadow, no reflections, no props
-Negative: photorealistic, photo scan, realistic texture, greasy, glossy oil, wet shine, noisy
-texture, dirt, burnt, multiple objects, plate, bowl, table, chopsticks, hands, background scene,
-steam, smoke, text, logo, watermark, cut off, cropped, blurry, low quality
+Negative: photorealistic, photo scan, greasy, glossy oil, wet shine, noisy texture, dirt, burnt,
+multiple objects, plate, bowl, table, chopsticks, hands, background, steam, text, logo,
+watermark, cropped, blurry, low quality
 ```
 
 **麵條團**（先做正面，再用 2.3 做其他三個視角）
@@ -154,18 +160,23 @@ Negative: {NEGATIVE}
 {STYLE}, a single empty deep ceramic noodle bowl, wide round opening, gently curved walls,
 thick rounded rim, smooth inner surface clearly visible, off-white glaze with a simple
 blue band pattern near the rim, flat stable base, nothing inside, {SHOT}
-Negative: photorealistic, photo scan, realistic texture, multiple objects, table, chopsticks,
-hands, background scene, food, soup, liquid, noodles, text, logo, watermark, cropped, blurry
+Negative: photorealistic, photo scan, greasy, glossy oil, noisy texture, dirt, multiple objects,
+table, chopsticks, hands, background, food, soup, liquid, noodles, text, logo, watermark,
+cropped, blurry, low quality
 ```
 
 ### 5.3 Tripo 設定
 
-| 物件 | 方式 | model_version | face_limit | smart_low_poly | convert_model |
+共同參數：`texture: true`、`pbr: false`、`texture_quality: "standard"`、`texture_version: "v3.5-20260815"`、`delight: true`；不設定 `export_orientation`。
+
+| 物件 | 端點 | `model` | `face_limit` | 備案 | Convert（`format: "GLTF"`） |
 |---|---|---|---|---|---|
-| 牛肉塊 | image_to_model | P1 試造型 → v3.1 正式版 | 3000 | True | GLTF、512、底部中心原點 |
-| 麵條團 | multiview_to_model | v3.1 | 3000 | True（失敗就關掉，改用 smart_lowpoly 後處理） | GLTF、512、底部中心原點 |
-| 青江菜 | image_to_model | v3.1 | 3000 | True | GLTF、512、底部中心原點、flatten_bottom |
-| 麵碗 | image_to_model | v3.1 | 5000 | True | GLTF、1024、底部中心原點、flatten_bottom |
+| 牛肉塊 | image-to-model | `P1-20260311` | 3000 | `v3.1-20260211` + `smart_low_poly: true` | `texture_size: 512`、`pivot_to_center_bottom: true` |
+| 麵條團 | 正面圖 → image-to-multiview → multiview-to-model | `P1-20260311` | 3000 | 同上 | `texture_size: 512`、`pivot_to_center_bottom: true` |
+| 青江菜 | image-to-model | `P1-20260311` | 3000 | 同上 | `texture_size: 512`、`pivot_to_center_bottom: true`、`flatten_bottom: true` |
+| 麵碗 | image-to-model | `P1-20260311` | 5000 | 同上，或 Blender 旋轉成形 | `texture_size: 1024`、`pivot_to_center_bottom: true`、`flatten_bottom: true` |
+
+預估點數約 1,080 點（≈ 11 美元），計算方式見流程文件 10.3。
 
 ---
 
@@ -199,15 +210,19 @@ hands, background scene, food, soup, liquid, noodles, text, logo, watermark, cro
    SHOT = "single object only, centered, full object visible, occupies 75% of the frame,
    3/4 top-down view at 30 degrees, plain pure white background, soft even studio lighting,
    no cast shadow, no reflections, no props"
-   NEGATIVE = "photorealistic, photo scan, realistic texture, greasy, glossy oil, wet shine,
-   noisy texture, dirt, burnt, multiple objects, plate, bowl, table, chopsticks, hands,
-   background scene, steam, smoke, text, logo, watermark, cut off, cropped, blurry, low quality"
+   NEGATIVE = "photorealistic, photo scan, greasy, glossy oil, wet shine, noisy texture, dirt,
+   burnt, multiple objects, plate, bowl, table, chopsticks, hands, background, steam, text,
+   logo, watermark, cropped, blurry, low quality"
    （容器的 NEGATIVE 拿掉 plate, bowl，加上 food, soup, liquid。）
+   限制：prompt ≤ 1024 字元、Negative ≤ 255 字元。
 6. 檢查辨識度：任何綠色的物件都要說明它和香菜（扇形分叉、波浪葉緣、細葉柄的小葉）在輪廓上有什麼不同。
-7. 背面形狀複雜的物件標註「需要多視角」，並附上 left／back／right 視角的 prompt。
-8. 每個 Tripo 物件列出建議設定：生成方式、model_version（試造型 P1 → 正式版 v3.1）、
-   face_limit（食物 3000、容器 5000）、smart_low_poly、convert_model 參數
-   （GLTF、貼圖尺寸、pivot_to_center_bottom、flatten_bottom 是否開啟）。
+7. 背面形狀複雜的物件標註「需要多視角」（流程：正面圖 → image-to-multiview → multiview-to-model）。
+8. 每個 Tripo 物件列出建議設定：端點、model（首選 P1-20260311；備案 v3.1-20260211 + smart_low_poly）、
+   face_limit（食物 3000、容器 5000）、Convert 參數（GLTF、texture_size 512 或 1024、
+   pivot_to_center_bottom、flatten_bottom 是否開啟）。共同參數固定為 texture true、pbr false、
+   texture_quality standard、texture_version v3.5-20260815、delight true，不設定 export_orientation。
+9. 依官方定價估算點數（1 點 = 0.01 美元）：參考圖 5、P1 圖生 3D 50、H3.1 圖生 3D 30 + 智慧低面數 10、
+   圖片轉多視角 10、格式轉換 10、重新上貼圖 10；每個物件以 3 次候選計算。
 
 輸出格式：
 ## 料理拆件表：{料理名稱}
@@ -217,6 +232,7 @@ hands, background scene, food, soup, liquid, noodles, text, logo, watermark, cro
 ## 辨識度檢查
 ## 參考圖 prompt（每個物件一段）
 ## Tripo 設定表
+## 點數預估
 ## 風險與注意事項（例如可能生成失敗的造型、需要手工修正的地方）
 
 物件 ID 用 snake_case：容器 bowl_／plate_／dish_ 開頭，食物 food_，誘餌 decoy_；
@@ -235,4 +251,5 @@ hands, background scene, food, soup, liquid, noodles, text, logo, watermark, cro
 | 底部不平、放不穩 | 描述加 `flat stable bottom`；`convert_model` 開 `flatten_bottom` |
 | 同一道料理風格不一致 | 所有物件用同一個圖像工具、同一組 STYLE；先做一件「風格基準物件」，其他物件用它當風格參考 |
 | 綠色食材和香菜太像 | 改輪廓（寬葉、圓葉、管狀），並拉開明度差；不要只改顏色 |
-| smart_low_poly 失敗 | 關掉它重新生成，再用 `smart_lowpoly` 後處理；或在 Blender 減面 |
+| H3.1 的 smart_low_poly 失敗 | 失敗不扣點；改用 P1，或關掉 smart_low_poly 生成後用 Retopology（`/v3/mesh/decimate`）減面 |
+| 貼圖有烘進去的陰影 | `texture_version: "v3.5-20260815"` 加 `delight: true`；還是不行再用第 4 節重新上貼圖 |

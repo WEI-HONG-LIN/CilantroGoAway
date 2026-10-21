@@ -3,7 +3,9 @@
 **用途：** 新增一道「可互動料理」時，從拆件、生成、清理到放進 Godot 的標準流程。每道料理都照這份流程走一次。
 **配套文件：** [`tripo3d_prompt範本.md`](tripo3d_prompt範本.md)（所有 prompt）、企劃書 v1.1 第 4、7 章、`docs/roles/04_3D美術.md`。
 
-> **資料來源與可信度：** Tripo 的參數名稱來自官方 Python SDK（`tripo3d` 1.x）的 API 文件；價格與授權條款引用自第三方整理，Tripo 經常改版，**開工前請到官方網站確認最新條款與點數**。
+> **資料來源（2026-10-21 核對）：** 參數、模型版本、點數價格與 API 授權條款都已對照 [Tripo 開發者文件](https://developers.tripo3d.ai/en/docs/introduction) 與 [API 定價頁](https://developers.tripo3d.ai/en/pricing)。Tripo Studio（網頁版）的訂閱方案條款在 `www.tripo3d.ai`，目前無法從這個環境讀取，仍需自行確認。Tripo 更新頻繁，正式生產時請**固定模型版本**，並定期重新核對。
+>
+> **參數命名：** 本文件使用 REST API v3 的名稱（`model`、`input`、`inputs`）。如果用 Python SDK（`tripo3d`），對應的名稱是 `model_version`、`image`、`images`，其他參數名稱相同。
 
 ---
 
@@ -73,6 +75,7 @@
 
 | 項目 | 要求 |
 |---|---|
+| 格式（官方規格） | PNG／JPEG／WebP，≤ 20 MB，至少 256×256 px；主體清楚、背景乾淨、遮擋少 |
 | 構圖 | **單一物件**，置中，佔畫面 70–80%，完整不裁切 |
 | 視角 | 正面或 3/4 俯視（約 30°），能看到物件的主要輪廓 |
 | 背景 | 純白或淺灰，無陰影、無桌面、無盤子 |
@@ -83,12 +86,16 @@
 ### 3.2 取得方式（擇一）
 
 - **用圖像生成工具**：把 prompt 範本的「參考圖 prompt」貼進你慣用的圖像生成工具。
-- **用 Tripo 內建**：Tripo 可以先由文字產生圖片再轉 3D（SDK 中有 `image_seed`，也有 `generate_multiview_image`）。
+- **用 Tripo 內建（建議）**：`POST /v3/generation/text-to-image`（`seedream_v4`，5 點；`banana_pro` 品質較高，15 點）產生參考圖，再把這個任務的 `task_id` 直接當成圖生 3D 的 `input`，不用下載再上傳。
 - **手繪或拼貼**：美術自己畫一張概念圖，風格最可控。
 
 ### 3.3 什麼時候需要多視角
 
-正面看不出背面形狀的物件（例如水餃的摺邊、肉塊的不規則背面），改用 **multiview_to_model**：準備正面、左、背、右四張圖（正面必填，其他可以缺）。四張圖的物件大小、光線、風格必須一致。
+正面看不出背面形狀的物件（例如水餃的摺邊、肉塊的不規則背面），改用 **multiview-to-model**：
+
+- 最多 4 張（front／left／back／right），**正面必填，至少 2 張**；所有圖片的物件、光線必須一致。
+- 最省事的做法：用 `POST /v3/generation/image-to-multiview`（10 點）從正面圖自動產生四個視角，再把它的 `task_id` 以 `inputs: [{"task_id": "…"}]` 傳給 multiview-to-model。
+- 自動產生的視角不對時，可以用 Edit Multiview（每張 5 點）修正單一視角。
 
 ### 3.4 手工物件（香菜、誘餌）
 
@@ -96,42 +103,58 @@
 
 ## 4. 步驟 ③ Tripo 生成
 
-### 4.1 建議設定
+### 4.1 選擇模型
 
-| 參數（SDK 名稱） | 建議值 | 說明 |
-|---|---|---|
-| 生成方式 | `image_to_model`（主要）、`multiview_to_model`（背面複雜時）、`text_to_model`（只用來試造型） | |
-| `model_version` | 試造型：`P1-20260311`；正式版：`v3.1-20260211` | 依第三方文件，P1 主打低面數、適合快速驗證；H3.1 精度較高。**以官網目前的版本清單為準** |
-| `texture` | `True` | 要貼圖 |
-| `pbr` | `False`（建議先試） | 我們用 Q 版風格材質，PBR 的金屬度和粗糙度貼圖用不到；只需要顏色貼圖 |
-| `texture_quality` | `standard` | 小物件在遊戲裡很小，`detailed` 效益低 |
-| `face_limit` | 食物 3000；容器 5000 | 對應企劃書與 04 美術的面數預算 |
-| `smart_low_poly` | `True`（正式版） | 產生比較乾淨的低面數拓撲；複雜造型可能失敗，失敗就關掉，改在步驟 ④ 減面 |
-| `quad` | `False` | 開啟會強制輸出 FBX；我們要 GLB |
-| `generate_parts` | `False` | 和 `smart_low_poly` 衝突，而且我們是一件一件生成 |
-| `auto_size` | `False` | 比例統一在 Blender 處理 |
-| `orientation` | `default` | |
-| `negative_prompt` | 見 prompt 範本 | 只有文生 3D 用得到 |
-| seeds | 記下 `model_seed`、`texture_seed` | 方便重現 |
+| 模型（`model`） | 特性（官方文件） | 每次圖生 3D 的點數（含標準貼圖） | 本專案用途 |
+|---|---|---|---|
+| `P1-20260311` | P 系列穩定版，官方推薦用於遊戲與行動裝置的低面數資產；拓撲乾淨、面數控制精準（50–20,000） | 50 | **首選**：食物與容器 |
+| `v3.1-20260211`（H3.1） | 預設的高精度模型；可加 `smart_low_poly`（+10 點，面數 500–20,000） | 30（+10 低面數 = 40） | **備案**：P1 造型不理想時改用；比 P1 便宜，但低面數模式遇到複雜造型可能失敗 |
+| `P2-20260801` | P 系列下一代，原生四邊面；**目前是 Preview** | 110 | 暫不使用：Preview 版本可能變動，而且較貴 |
 
-### 4.2 生成策略
+> 官方建議正式生產時固定模型版本，避免模型更新造成風格不一致。整個專案請統一用同一個版本，換版本要記錄在 `docs/decisions.md`。
+>
+> **P1 不支援** `smart_low_poly`、`quad`、`generate_parts`、`geometry_quality`，送了也沒有作用；P1 的面數直接由 `face_limit` 控制。
 
-1. 每個物件先用 P1 生成 2–4 個候選，選造型最好的一個。
-2. 選定後，用相同的參考圖以 H3.1 生成正式版（或直接用 P1 的結果，如果品質已經夠）。
-3. 只有貼圖不滿意時，用 `texture_model` 重新上貼圖（可以加 `text_prompt` 或 `style_image` 指定風格），不要整個重生成。
-4. **每生成 3 次還不滿意，就停下來改參考圖**，不要一直重抽浪費點數。
+### 4.2 建議參數
 
-### 4.3 替代方案：整盤生成再切割
+| 參數 | P1 建議值 | H3.1 建議值 | 說明 |
+|---|---|---|---|
+| `input`／`inputs` | 參考圖的 `task_id`、`file_token` 或 URL | 同左 | 一次只能用一種來源 |
+| `face_limit` | 食物 3000；容器 5000 | 同左 | 官方建議簡單模型至少 150、複雜模型至少 250，太低會變形 |
+| `smart_low_poly` | 不支援 | `true` | 複雜造型可能失敗，失敗不扣點，關掉重試即可 |
+| `texture` | `true` | `true` | |
+| `pbr` | `false` | `false` | 預設是 `true`；我們用 Q 版材質，只需要顏色貼圖。開了 `pbr` 會強制開 `texture` |
+| `texture_quality` | `standard` | `standard` | `detailed` +10 點、`extreme`（8K）+20 點，小物件用不到 |
+| `texture_version` | `v3.5-20260815` | `v3.5-20260815` | 最新的貼圖模型，搭配 `delight` 使用 |
+| `delight` | `true` | `true` | 去除參考圖中烘進去的光影，正好符合「平塗、無陰影」的貼圖需求；只有 v3.5 貼圖模型有效 |
+| `texture_alignment` | `original_image` | `original_image` | 顏色以參考圖為準 |
+| `orientation` | `default` | `default` | |
+| `auto_size` | `false` | `false` | 開啟會以公尺為單位縮放；我們統一在 Blender 依拆件表縮放 |
+| `export_orientation` | **不要設定** | **不要設定** | 官方說明：設定後再做後處理，方向可能會錯但不會報錯；方向在最後的 convert 才處理 |
+| `quad` | 不支援 | `false` | 開啟會強制輸出 FBX |
+| `generate_parts` | 不支援 | `false` | 和貼圖、低面數都衝突 |
+| `model_seed`、`texture_seed` | 記錄下來 | 記錄下來 | 同樣的輸入加上同樣的 seed 會得到相同結果；只想換貼圖時，固定 `model_seed`、改 `texture_seed` |
+
+### 4.3 生成策略
+
+1. 每個物件先用 P1 生成 2–3 個候選（換 `model_seed`），選造型最好的一個。
+2. P1 的造型不理想時，用同一張參考圖改跑 H3.1 + `smart_low_poly` 比較。
+3. 只有貼圖不滿意時，用 `POST /v3/models/texture` 重新上貼圖（10 點，可以加文字或圖片提示），不要整個重新生成。
+4. **同一個物件生成 3 次還不滿意，就停下來改參考圖**，不要一直重抽浪費點數。
+5. 失敗或取消的任務不扣點；P 系列同時最多 5 個任務並行。
+
+### 4.4 替代方案：整盤生成再切割
 
 如果想要「整盤料理」的構圖感，可以先生成整盤，再用 `mesh_segmentation`（`segmentation_granularity`：`simple`／`balanced`／`detailed`）切成零件，然後用 `mesh_completion`（`ai_completion`）補上被遮住的面。這條路線結果較不穩定，**只建議用來做非互動的裝飾性料理**，可互動的食物還是照 4.1 一件一件生成。
 
 ## 5. 步驟 ④ Tripo 後處理
 
-| 工具（SDK） | 何時使用 | 建議參數 |
-|---|---|---|
-| `smart_lowpoly` | 生成時沒開 smart low poly，或面數還太高 | `face_limit` 3000（食物），`smart_uv=True` |
-| `convert_model` | 每個物件都要 | `format="GLTF"`、`texture_size=1024`（小食物可以 512）、`pivot_to_center_bottom=True`、`flatten_bottom=True`（只用在應該平放的物件，例如水餃、碗、盤）、`face_limit` 同上 |
-| `mesh_uv` | UV 破碎、之後要重畫貼圖時 | 輸入不能超過 80,000 個三角面 |
+| 工具（REST 端點／SDK 方法） | 何時使用 | 建議參數 | 點數 |
+|---|---|---|---|
+| Convert Format：`POST /v3/models/convert`（SDK `convert_model`） | **每個物件都要** | `format: "GLTF"`、`texture_size: 512`（食物）／`1024`（容器）、`pivot_to_center_bottom: true`、`flatten_bottom: true`（只用在應該平放的物件，例如水餃、碗、盤）；方向需要調整時在這一步設定 `export_orientation` | 5；有任何非預設參數（例如上面這些）就是 10 |
+| Retopology：`POST /v3/mesh/decimate`（SDK `smart_lowpoly`） | 面數還太高，或拓撲太亂 | `model: "v3.0"`、`face_limit: 3000`、`smart_uv: true` | 35（v3.0 三角面） |
+| Smart UV：`POST /v3/mesh/uv`（SDK `mesh_uv`） | UV 破碎、之後要重畫貼圖時 | 輸入不能超過 80,000 個三角面 | 20 |
+| Texture：`POST /v3/models/texture`（SDK `texture_model`） | 只想換貼圖 | 同 4.2 的貼圖參數，可加文字或圖片提示 | 10（標準） |
 
 `pivot_to_center_bottom` 會把原點放在底部中心，符合 04 美術的原點規範；香菜原點例外（葉柄根部），但香菜是手工做的，不受影響。
 
@@ -197,11 +220,42 @@
 - 授權：<付費方案名稱；確認可商用>
 ```
 
-## 10. 授權與成本注意事項
+## 10. 授權與成本
 
-- 依第三方整理的資料，**免費方案的模型是公開的（CC BY 4.0），而且不能商用**；付費方案才有私人模型與商業授權。要上架販售的遊戲，**正式資產一律用付費方案生成**，並在資產紀錄寫上方案名稱。
-- 點數價格、方案內容各來源說法不一，開工前請到 Tripo 官方網站確認。
-- 智慧低面數、貼圖重生成、格式轉換等功能可能另外扣點數；先用 P1 試造型，確定後才跑正式版，可以省點數。
+### 10.1 授權
+
+- **API（開發者平台）：** [服務條款](https://developers.tripo3d.ai/en/terms) 3.2 節寫明，產出的模型可以用於合法的商業或非商業用途。但 Tripo **不保證產出是獨一無二的**，其他使用者可能得到相似的結果，所以招牌角色或商標類的造型不要只依賴 AI 生成。
+- **Tripo Studio（網頁版）：** 第三方整理的資料指出免費方案的模型是公開的（CC BY 4.0）、不能商用，付費方案才有私人模型與商業授權。這部分的官方條款在 `www.tripo3d.ai`，**目前還沒核對**，用 Studio 生成正式資產前請先確認。
+- 不論用哪個管道，都要在資產紀錄寫上使用的管道與方案。
+
+### 10.2 點數價格（API，2026-10-21 官方定價）
+
+1 點 = 0.01 美元，從 1 美元起購；**失敗或取消的任務不扣點**。
+
+| 項目 | 點數 |
+|---|---:|
+| 文生圖（`seedream_v4`／`seedream_v5`） | 5 |
+| 圖片轉多視角 | 10 |
+| P1 圖生 3D（含標準貼圖）／多視角生 3D | 50／50 |
+| H3.1 圖生 3D（含標準貼圖）＋智慧低面數 | 30 + 10 |
+| P2 Preview 圖生 3D（含標準貼圖） | 110 |
+| 重新上貼圖（標準） | 10 |
+| 格式轉換（基本／含自訂參數） | 5／10 |
+| 重新拓撲（v3.0 三角面） | 35 |
+
+### 10.3 每道料理的預算估計
+
+以牛肉麵為例（5 種 Tripo 物件：牛肉塊 ×2 造型、麵條團 ×2 造型、青江菜；麵碗也用 Tripo）：
+
+| 項目 | 每個物件 | 6 個物件合計 |
+|---|---:|---:|
+| 參考圖（含 1 次重做） | 10 | 60 |
+| P1 候選 3 次 | 150 | 900 |
+| 格式轉換 | 10 | 60 |
+| 預留重新上貼圖 1 次 | 10 | 60 |
+| **合計** | **180** | **約 1,080 點 ≈ 11 美元** |
+
+需要多視角的物件每個再加約 10 點。改用 H3.1 + 智慧低面數，候選 3 次是 120 點，可以再省約 30%。
 
 ## 11. 新增一道料理的快速檢查
 
@@ -214,6 +268,8 @@
 ---
 
 **參考資料**
+- [Tripo 開發者文件](https://developers.tripo3d.ai/en/docs/introduction)（官方，2026-10-21 核對）：[模型與版本](https://developers.tripo3d.ai/en/docs/models-and-versions)、[圖生 3D（P 系列）](https://developers.tripo3d.ai/en/docs/generation-image-to-model/p)、[圖生 3D（H 系列）](https://developers.tripo3d.ai/en/docs/generation-image-to-model/standard)、[多視角生 3D](https://developers.tripo3d.ai/en/docs/generation-multiview-to-model/p)、[格式轉換](https://developers.tripo3d.ai/en/docs/models-convert)、[重新拓撲](https://developers.tripo3d.ai/en/docs/mesh-decimate)、[計費](https://developers.tripo3d.ai/en/docs/billing)
+- [Tripo API 定價](https://developers.tripo3d.ai/en/pricing)、[Tripo API 服務條款](https://developers.tripo3d.ai/en/terms)（官方）
 - [Tripo Python SDK API 文件（官方）](https://github.com/VAST-AI-Research/tripo-python-sdk/blob/master/docs/API.md)：參數名稱與可用值
 - [Tripo Smart Mesh 功能頁](https://www.tripo3d.ai/features/smart-mesh)、[Tripo 低面數生成頁](https://www.tripo3d.ai/features/low-poly-3d-model-generator)
 - [Tripo：如何在 Godot 使用 AI 3D 模型](https://www.tripo3d.ai/blog/how-to-use-ai-3d-models-in-godot)
