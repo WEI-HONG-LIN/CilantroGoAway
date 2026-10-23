@@ -116,3 +116,18 @@
 - 三角面數：各 384；材質 2 個；碰撞 `-convcolonly` 凸包 ×1；浮力取樣點 `Buoyancy_01`–`_04`
 - 匯出：art/models/shared/decoy_scallion_a.glb、_b.glb、_c.glb
 - 授權：自製，無第三方授權問題
+
+### cilantro_full／_small／_fragment（香菜，全遊戲共用）
+- 用途：目標物（企劃書 3.2、4.2：完整葉、小葉、碎葉 × 2 色＋浸濕變體）
+- 管道：Blender 手工（Claude 透過 Blender MCP 以 Python 建立，2026-10-23）。另有 Tripo 版 prompt 供比較（尚未生成）
+- 原始檔：art/source/shared/tableware.blend（`cilantro` 集合）
+- 造型：
+  - full：一根莖、頂端三片扇形小葉（中央大、兩側小葉有短柄），約 2.1×2.4 cm
+  - small：一片扇形小葉＋短柄，約 1.5×1.5 cm
+  - fragment：一片撕下的葉片、下緣鋸齒狀撕口、沒有莖，約 0.7×0.4 cm
+  - 每片小葉分三個圓瓣，葉片厚 0.8 mm，葉緣微微上翹；原點在葉柄根部（fragment 在撕口中央）
+- 顏色（sRGB，粗糙度）：亮綠 (40,136,56) 0.8；深綠 (30,112,50) 0.8；浸濕 (26,72,40) 0.35
+- 明度（CIE L*）：香菜亮綠 50.8、深綠 41.4、浸濕 26.8；蔥花外皮 67.6、蔥花切面 91.2。香菜和蔥花差 ≥ 16，灰階對照圖已確認可分辨；青江菜靠寬大湯匙形葉和淡色粗梗區分
+- 三角面數：full 272、small 104、fragment 64；材質 1 個；碰撞 `-convcolonly` 凸包 ×1；浮力取樣點 `Buoyancy_01`–`_04`（fragment 3 個）
+- 匯出：art/models/shared/cilantro/cilantro_<full|small|fragment>_<light|dark|soaked>.glb（3 造型 × 3 材質 = 9 個）
+- 授權：自製，無第三方授權問題
