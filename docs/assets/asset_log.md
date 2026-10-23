@@ -17,7 +17,7 @@
 - Blender 修改：尚未清理
 - 最終三角面數／貼圖：<待補>
 - 使用點數：<待補>
-- 授權：<待補：方案名稱；確認可商用>
+- 授權：Tripo Pro（可商用；使用者確認 2026-10-23）。證明：訂閱收據＋生成紀錄截圖，存本機 `art/source/licenses/tripo/`
 
 ### food_beef_chunk_b
 - 料理：beef_noodle_soup
@@ -34,7 +34,7 @@
 - Blender 修改：尚未清理；底部有筋的溝但沒有筋的顏色，可接受，清理時壓平
 - 最終三角面數／貼圖：<待補>
 - 使用點數：<待補>
-- 授權：<待補：方案名稱；確認可商用>
+- 授權：Tripo Pro（可商用；使用者確認 2026-10-23）。證明：訂閱收據＋生成紀錄截圖，存本機 `art/source/licenses/tripo/`
 
 
 ### bowl_noodle
@@ -130,4 +130,4 @@
 - 碰撞 `-convcolonly` 凸包 ×1；浮力取樣點 `Buoyancy_01`–`_04`（碎葉 3 個）
 - 匯出：art/models/shared/cilantro/cilantro_<full|small|fragment>_<light|dark|soaked>.glb（3 造型 × 3 材質 = 9 個，每個 360–510 KB）
 - 原始檔：art/source/shared/tableware.blend（`cilantro` 集合；Blender 手工 v1 在 `cilantro_blender_v1` 集合，已排除不匯出）
-- 授權：Tripo 生成，依生成時的方案（需為 Pro 以上才可商用）；<待補：生成時的方案>
+- 授權：Tripo Pro（可商用；使用者確認 2026-10-23）。證明：訂閱收據＋生成紀錄截圖，存本機 `art/source/licenses/tripo/`
