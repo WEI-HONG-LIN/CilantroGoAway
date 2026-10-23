@@ -1,0 +1,6 @@
+# 文字檔統一用 LF 換行
+* text=auto eol=lf
+
+# 目前只上傳開發文件，不使用 Git LFS。
+# 之後要上傳模型、圖片、音效時，再為這些檔案類型加上 LFS 規則，例如：
+# *.glb filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,19 @@
+# 目前只上傳開發文件（決策 D-20261023-02）。
+# 採白名單：先排除全部，再列出要上傳的檔案與資料夾。
+# Godot 專案、程式、美術（含 Blender 原始檔）、音效都只留在本機。
+/*
+!/.gitignore
+!/.gitattributes
+!/CLAUDE.md
+!/香菜退散_Godot遊戲企劃書.md
+!/docs/
+!/.claude/
+
+# .claude/ 裡只上傳角色定義
+/.claude/*
+!/.claude/agents/
+
+# 作業系統
+.DS_Store
+Thumbs.db
+desktop.ini

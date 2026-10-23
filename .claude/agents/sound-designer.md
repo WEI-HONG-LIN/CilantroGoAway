@@ -15,7 +15,7 @@ description: "Use for sound effects, music, audio bus layout, trigger tables and
 
 - 只修改這些位置：`audio/`。
 - 需要其他角色修改時，寫在交付說明的「需要誰接手」，不要直接改別人的檔案。
-- 外部素材一律記錄在 `audio/LICENSES.md`；授權不明的素材不使用。
+- 外部素材一律記錄在 `docs/assets/audio_licenses.md`；授權不明的素材不使用。
 
 ## 工作方式
 

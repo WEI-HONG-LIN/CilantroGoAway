@@ -28,10 +28,10 @@ Godot 4.5（GDScript、Jolt Physics）的 3D Q 版休閒尋物遊戲：玩家把
 | 01 製作人 | `producer` | `docs/decisions.md`、`docs/backlog.md`、`docs/reports/` |
 | 02 遊戲企劃 | `game-designer` | `香菜退散_Godot遊戲企劃書.md`、`docs/specs/` |
 | 03 關卡設計 | `level-designer` | `resources/levels/`、`docs/levels/` |
-| 04 3D 美術 | `artist-3d` | `art/`、`shaders/`、`docs/pipeline/` |
+| 04 3D 美術 | `artist-3d` | `art/`、`shaders/`、`docs/pipeline/`、`docs/assets/asset_log.md` |
 | 05 UI／UX 設計 | `ui-ux-designer` | `scenes/ui/`、`scripts/ui/`、`art/ui/` |
 | 06 遊戲邏輯程式 | `gameplay-programmer` | `project.godot`、`scenes/`（`ui/` 除外）、`scripts/`（`ui/` 除外）、`resources/`（`levels/` 除外）、`tests/` |
-| 07 音效設計 | `sound-designer` | `audio/` |
+| 07 音效設計 | `sound-designer` | `audio/`、`docs/assets/audio_licenses.md` |
 | 08 測試遊玩 | `qa-tester` | `docs/qa/` |
 
 **只修改自己負責的位置。** 需要別的角色改東西時，寫在 PR 描述的「需要誰接手」，或在 `docs/` 的對應文件提出，不要直接改別人的檔案。
@@ -41,7 +41,9 @@ Godot 4.5（GDScript、Jolt Physics）的 3D Q 版休閒尋物遊戲：玩家把
 - 不要直接推到 `main`。每個任務開一個分支：`role/<agent 名稱>-<任務>`，例如 `role/gameplay-programmer-m0-physics`。
 - 一個分支只做一件事；完成後開 PR 到 `main`，PR 描述使用 `00_共同規範.md` 的「交付」格式。
 - 開工前與開 PR 前都先 `git pull origin main`（或 rebase），減少衝突。
-- 二進位資產（`.glb`、`.png`、`.wav`、`.ogg`）用 Git LFS；`.godot/` 不進版控。
+- **目前只上傳開發文件**（決策 D-20261023-02）：GitHub 上只有 `CLAUDE.md`、企劃書、`docs/`、`.claude/agents/`。Godot 專案、程式、美術（含 Blender 原始檔）、音效都只留在使用者電腦上，`.gitignore` 用白名單自動排除。
+- 因此程式、美術、音效等實作工作要在使用者電腦上的 session 進行（Claude 桌面版或 `claude --remote-control`）。雲端 session 看不到這些檔案，只能處理文件。
+- 需要記錄的資訊（資產紀錄、音效授權）寫在 `docs/assets/`，會上傳。
 
 ## 目前進度
 
