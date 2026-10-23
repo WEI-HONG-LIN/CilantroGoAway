@@ -35,3 +35,64 @@
 - 最終三角面數／貼圖：<待補>
 - 使用點數：<待補>
 - 授權：<待補：方案名稱；確認可商用>
+
+
+### bowl_noodle
+- 料理：beef_noodle_soup（麵碗）
+- 管道：Blender 手工（Claude 透過 Blender MCP 以 Python 建立，2026-10-23）
+- 原始檔：art/source/shared/tableware.blend
+- 生成方式：旋轉成形＋程式繪製的回紋貼圖（流程文件 6.1；D-20261023-06）
+- 尺寸：18×8 cm（直徑×高）
+- 三角面數／貼圖：3,072／2048×512；碰撞 `bowl_noodle-colonly`（本體減面 50%）
+- 匯出：art/models/beef_noodle_soup/bowl_noodle.glb
+- 授權：自製，無第三方授權問題
+
+### bowl_soup_small
+- 料理：beef_noodle_soup（小湯碗）
+- 管道：Blender 手工（Claude 透過 Blender MCP 以 Python 建立，2026-10-23）
+- 原始檔：art/source/shared/tableware.blend
+- 生成方式：旋轉成形＋程式繪製的回紋貼圖（流程文件 6.1；D-20261023-06）
+- 尺寸：12×6 cm（直徑×高）
+- 三角面數／貼圖：3,072／共用 bowl_noodle 貼圖；碰撞 `bowl_soup_small-colonly`（本體減面 50%）
+- 匯出：art/models/beef_noodle_soup/bowl_soup_small.glb
+- 授權：自製，無第三方授權問題
+
+### bowl_rice
+- 料理：braised_pork_rice（飯碗）
+- 管道：Blender 手工（Claude 透過 Blender MCP 以 Python 建立，2026-10-23）
+- 原始檔：art/source/shared/tableware.blend
+- 生成方式：旋轉成形＋程式繪製的回紋貼圖（流程文件 6.1；D-20261023-06）
+- 尺寸：13×7.5 cm（直徑×高）
+- 三角面數／貼圖：3,072／共用 bowl_noodle 貼圖；碰撞 `bowl_rice-colonly`（本體減面 50%）
+- 匯出：art/models/braised_pork_rice/bowl_rice.glb
+- 授權：自製，無第三方授權問題
+
+### plate_dumpling
+- 料理：dumplings（水餃盤）
+- 管道：Blender 手工（Claude 透過 Blender MCP 以 Python 建立，2026-10-23）
+- 原始檔：art/source/shared/tableware.blend
+- 生成方式：旋轉成形＋程式繪製的回紋貼圖（流程文件 6.1；D-20261023-06）
+- 尺寸：24×2.5 cm（直徑×高）
+- 三角面數／貼圖：2,688／2048×512；碰撞 `plate_dumpling-colonly`（本體減面 50%）
+- 匯出：art/models/dumplings/plate_dumpling.glb
+- 授權：自製，無第三方授權問題
+
+### plate_dumpling_small
+- 料理：dumplings（水餃小盤）
+- 管道：Blender 手工（Claude 透過 Blender MCP 以 Python 建立，2026-10-23）
+- 原始檔：art/source/shared/tableware.blend
+- 生成方式：旋轉成形＋程式繪製的回紋貼圖（流程文件 6.1；D-20261023-06）
+- 尺寸：16×2 cm（直徑×高）
+- 三角面數／貼圖：2,688／共用 plate_dumpling 貼圖；碰撞 `plate_dumpling_small-colonly`（本體減面 50%）
+- 匯出：art/models/dumplings/plate_dumpling_small.glb
+- 授權：自製，無第三方授權問題
+
+### dish_sauce
+- 料理：dumplings（沾醬碟）
+- 管道：Blender 手工（Claude 透過 Blender MCP 以 Python 建立，2026-10-23）
+- 原始檔：art/source/shared/tableware.blend
+- 生成方式：旋轉成形＋程式繪製的回紋貼圖（流程文件 6.1；D-20261023-06）
+- 尺寸：8×2.5 cm（直徑×高）
+- 三角面數／貼圖：2,048／2048×512；碰撞 `dish_sauce-colonly`（本體減面 50%）
+- 匯出：art/models/dumplings/dish_sauce.glb
+- 授權：自製，無第三方授權問題

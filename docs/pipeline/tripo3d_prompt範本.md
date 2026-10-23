@@ -147,13 +147,13 @@ isolated single object, game-ready low poly prop, closed watertight mesh, solid 
 
 | # | 物件 ID | 中文名 | 類型 | 數量 | 尺寸（cm） | 生成方式 | 碰撞 | 密度 | 進湯 | 掛點面 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | bowl_noodle | 麵碗 | 容器 | 1 | 18×18×8 | Tripo 圖生（或 Blender 旋轉成形） | 凹面 `-colonly` | — | — | — |
+| 1 | bowl_noodle | 麵碗 | 容器 | 1 | 18×18×8 | Blender 旋轉成形（已完成） | 凹面 `-colonly` | — | — | — |
 | 2 | food_beef_chunk_a／_b | 牛肉塊（A 圓潤方塊、B 扁楔形） | 食物 | 3 | 4×3×2.5 | Tripo 圖生 | 凸包 ×1 | 1.1 | 是 | Top／Side／Bottom |
 | 3 | food_noodle_clump_a／_b | 麵條團（2 種造型） | 食物 | 2–3 | 6×5×2 | Tripo 多視角 | 凸包 ×2 | 1.08 | 是 | Top／Bottom |
 | 4 | food_bok_choy_leaf_a／_b | 青江菜葉（A 大外葉、B 小內葉；單片，不是整把） | 食物 | 2 | 8×4×1.2 | Tripo 圖生 | 凸包 ×2 | 0.9 | 是 | Top／Bottom |
 | 5 | decoy_scallion | 蔥花 | 誘餌 | 6–10 | 0.6×0.6×0.3 | Blender 手工 | 凸包 ×1 | 0.7 | 是 | — |
 | 6 | cilantro_* | 香菜 | 目標 | — | — | 共用模型 | — | 0.6／1.05 | 是 | — |
-| 7 | bowl_soup_small | 小湯碗（1-6 套餐的小碗牛肉湯） | 容器 | 1 | 12×12×6 | Tripo 圖生（或 Blender 旋轉成形） | 凹面 `-colonly` | — | — | — |
+| 7 | bowl_soup_small | 小湯碗（1-6 套餐的小碗牛肉湯） | 容器 | 1 | 12×12×6 | Blender，麵碗縮放（已完成） | 凹面 `-colonly` | — | — | — |
 | 8 | deco_noodle_strands | 裝飾散麵（掛在麵條團與碗緣，不能互動） | 裝飾（固定） | 3–5 | 長 8–12，粗 0.5 | Blender 沿曲線手工 | 無 | — | — | — |
 
 湯：牛肉湯預設，混濁度 0.6，液面高度在碗高的 70%。
@@ -211,7 +211,7 @@ background, centered, fully visible, filling about 75% of the frame, 3/4 top-dow
 30 degrees, on a plain pure white background, soft even studio lighting, shadowless.
 ```
 
-**麵碗**（小湯碗把 `deep ceramic noodle bowl: wide round opening` 改成 `small ceramic soup bowl: small round opening`）
+**麵碗**（只用來產生花紋與顏色的參考圖；模型改在 Blender 做，見流程文件 6.1。小湯碗把 `deep ceramic noodle bowl: wide round opening` 改成 `small ceramic soup bowl: small round opening`）
 ```text
 cute stylized 3D game asset, toy-like, soft clay look, chunky rounded shapes, slightly
 exaggerated proportions, simple clean silhouette, hand-painted colors, matte finish.
@@ -224,6 +224,21 @@ isolated on the white background, centered, fully visible, filling about 75% of 
 shadowless.
 ```
 
+### 5.4 共用容器（Blender，2026-10-23 完成）
+
+所有容器用同一套奶白釉＋藍色回紋，原始檔都在 `art/source/shared/tableware.blend`（做法見流程文件 6.1）。
+
+| 物件 ID | 中文名 | 料理 | 尺寸（cm，直徑×高） | 做法 | 匯出 |
+|---|---|---|---|---|---|
+| bowl_noodle | 麵碗 | beef_noodle_soup | 18×8 | 旋轉成形；碗緣下藍帶＋回紋 20 組 | `art/models/beef_noodle_soup/bowl_noodle.glb` |
+| bowl_soup_small | 小湯碗（1-6） | beef_noodle_soup | 12×6 | 麵碗縮放，共用貼圖 | `art/models/beef_noodle_soup/bowl_soup_small.glb` |
+| bowl_rice | 飯碗 | braised_pork_rice | 13×7.5 | 麵碗縮放，共用貼圖 | `art/models/braised_pork_rice/bowl_rice.glb` |
+| plate_dumpling | 水餃盤 | dumplings | 24×2.5 | 旋轉成形；盤緣藍線＋回紋 40 組＋內圈細線 | `art/models/dumplings/plate_dumpling.glb` |
+| plate_dumpling_small | 水餃小盤（1-6） | dumplings | 16×2 | 水餃盤縮放，共用貼圖 | `art/models/dumplings/plate_dumpling_small.glb` |
+| dish_sauce | 沾醬碟 | dumplings | 8×2.5 | 旋轉成形；碟緣藍邊 | `art/models/dumplings/dish_sauce.glb` |
+
+物件 ID 中 `bowl_rice`、`plate_dumpling`、`plate_dumpling_small`、`dish_sauce` 是 3D 美術的提案，待企劃確認。
+
 ### 5.3 生成 3D 的設定
 
 共同參數：`texture: true`、`pbr: false`、`texture_quality: "standard"`、`texture_version: "v3.5-20260815"`、`delight: true`；不設定 `export_orientation`。網頁版上對應的選項名稱見流程文件第 12 節。
@@ -233,7 +248,6 @@ shadowless.
 | 牛肉塊 | 圖片生 3D | `P1-20260311` | 3000 | `v3.1-20260211` + `smart_low_poly: true` | `texture_size: 512`、`pivot_to_center_bottom: true` |
 | 麵條團 | 正面圖 → 圖片轉多視角 → 多視角生 3D | `P1-20260311` | 3000 | 同上 | `texture_size: 512`、`pivot_to_center_bottom: true` |
 | 青江菜葉 | 圖片生 3D | `P1-20260311` | 3000 | 同上 | `texture_size: 512`、`pivot_to_center_bottom: true`、`flatten_bottom: true` |
-| 麵碗、小湯碗 | 圖片生 3D | `P1-20260311` | 5000 | 同上，或 Blender 旋轉成形 | `texture_size: 1024`、`pivot_to_center_bottom: true`、`flatten_bottom: true` |
 
 > 單張圖片生成 3D 時，背面的形狀會被推測出來，但貼圖顏色只能靠猜（例如牛肉塊 B 底部有筋的溝、沒有筋的顏色）。底部的小問題可以接受或在 Blender 修；背面是重點的物件改用多視角。
 
