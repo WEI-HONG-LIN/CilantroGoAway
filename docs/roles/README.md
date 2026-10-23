@@ -12,6 +12,34 @@
    - 決策紀錄 → `docs/decisions.md`（由製作人維護）
    - 資產製作流程 → `docs/pipeline/`（Tripo3D 料理建模流程與 prompt 範本）
 
+## 用 Claude Code 開角色 session
+
+每個角色在 `.claude/agents/` 都有對應的定義（名稱見下表的 Agent 欄），repo 根目錄的 `CLAUDE.md` 會在每個 session 開啟時自動載入共同規則。
+
+- **網頁版／手機（claude.ai/code）**：選這個 repo 開新 session，第一句話指定角色與任務，例如：
+  ```text
+  你是 gameplay-programmer。照 .claude/agents/gameplay-programmer.md 和 docs/roles/06_遊戲邏輯程式.md 工作。
+  任務：完成 M0 技術驗證（企劃書 9.2），完成後開 PR 到 main。
+  ```
+- **本機終端機**：每個角色用獨立的 worktree，並直接以角色身分啟動，例如：
+  ```bash
+  claude --worktree programmer-m0 --agent gameplay-programmer
+  ```
+- **同一個 session 內委派**：「請用 level-designer 子代理規劃 1-5 的香菜配置」。
+
+各 session 之間不會自動同步，成果透過 PR 合併到 `main` 後，其他角色 `git pull origin main` 才看得到。
+
+| Agent 名稱 | 角色 |
+|---|---|
+| `producer` | 01 製作人 |
+| `game-designer` | 02 遊戲企劃 |
+| `level-designer` | 03 關卡設計 |
+| `artist-3d` | 04 3D 美術 |
+| `ui-ux-designer` | 05 UI／UX 設計 |
+| `gameplay-programmer` | 06 遊戲邏輯程式 |
+| `sound-designer` | 07 音效設計 |
+| `qa-tester` | 08 測試遊玩 |
+
 ## 角色清單
 
 | # | 角色 | 檔案 | 一句話職責 | 主要交付物 |
