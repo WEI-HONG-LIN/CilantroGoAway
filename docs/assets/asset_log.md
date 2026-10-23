@@ -105,3 +105,13 @@
 - 三角面數：712／372／1,228；材質各 2 個（主色＋藍色）
 - 動畫：筷子、鑷子各有 `grip`（12 格）
 - 授權：自製，無第三方授權問題
+
+### decoy_scallion_a／_b／_c
+- 用途：誘餌（蔥花），牛肉麵與水餃共用（企劃書 3.3、4.2）
+- 管道：Blender 手工（Claude 透過 Blender MCP 以 Python 建立，2026-10-23）
+- 原始檔：art/source/shared/tableware.blend（`decoys` 集合）
+- 造型：A 圓圈 6×6×3 mm；B 斜切橢圓 8×6 mm；C 薄片 5.7×5.2×1.8 mm
+- 顏色：外皮綠 sRGB (112,168,64)、切面淡綠白 (218,232,176)，比香菜亮，靠「中空圓圈」的輪廓和香菜區分
+- 三角面數：各 320；材質 2 個；碰撞 `-convcolonly` 凸包 ×1；浮力取樣點 `Buoyancy_01`–`_04`
+- 匯出：art/models/shared/decoy_scallion_a.glb、_b.glb、_c.glb
+- 授權：自製，無第三方授權問題

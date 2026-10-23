@@ -151,7 +151,7 @@ isolated single object, game-ready low poly prop, closed watertight mesh, solid 
 | 2 | food_beef_chunk_a／_b | 牛肉塊（A 圓潤方塊、B 扁楔形） | 食物 | 3 | 4×3×2.5 | Tripo 圖生 | 凸包 ×1 | 1.1 | 是 | Top／Side／Bottom |
 | 3 | food_noodle_clump_a／_b | 麵條團（2 種造型） | 食物 | 2–3 | 6×5×2 | Tripo 多視角 | 凸包 ×2 | 1.08 | 是 | Top／Bottom |
 | 4 | food_bok_choy_leaf_a／_b | 青江菜葉（A 大外葉、B 小內葉；單片，不是整把） | 食物 | 2 | 8×4×1.2 | Tripo 圖生 | 凸包 ×2 | 0.9 | 是 | Top／Bottom |
-| 5 | decoy_scallion | 蔥花 | 誘餌 | 6–10 | 0.6×0.6×0.3 | Blender 手工 | 凸包 ×1 | 0.7 | 是 | — |
+| 5 | decoy_scallion_a／_b／_c | 蔥花（A 圓圈、B 斜切橢圓、C 薄片；已完成，`art/models/shared/`，牛肉麵與水餃共用） | 誘餌 | 6–10 | 0.6×0.6×0.3 | Blender 手工 | 凸包 ×1 | 0.7 | 是 | — |
 | 6 | cilantro_* | 香菜 | 目標 | — | — | 共用模型 | — | 0.6／1.05 | 是 | — |
 | 7 | bowl_soup_small | 小湯碗（1-6 套餐的小碗牛肉湯） | 容器 | 1 | 12×12×6 | Blender，麵碗縮放（已完成） | 凹面 `-colonly` | — | — | — |
 | 8 | deco_noodle_strands | 裝飾散麵（掛在麵條團與碗緣，不能互動） | 裝飾（固定） | 3–5 | 長 8–12，粗 0.5 | Blender 沿曲線手工 | 無 | — | — | — |
