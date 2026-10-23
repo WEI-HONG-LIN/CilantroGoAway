@@ -103,11 +103,12 @@
 | 設定 | 建議 |
 |---|---|
 | Prompt | 照 [prompt 範本](tripo3d_prompt範本.md) 第 2 節組合；**這個分頁沒有負面描述欄位**，不要貼 Negative 段落 |
-| Generation Model | 整個專案固定用同一個模型（目前可用 Nano Banana；GPT Image 2.5 需升級方案） |
+| Generation Model | **整個專案固定用 GPT Image 2**（2026-10-23 比較：同一份 prompt，GPT Image 2.5 會變濕亮、像焦糖，GPT Image 2 偏霧面黏土）。切換到別的分頁再回來時，確認沒有被改回 2.5 |
 | Aspect Ratio | 1:1 |
 | Number of Images | 4（想省點數可選 2） |
 | 4K Resolution | 關 |
 | 參考圖 | 基準物件以外，上傳風格基準圖（輸入框左下角的圖片按鈕，待確認） |
+| 選定後 | 滑鼠移到選中的那張圖上，右下角有 **Generate 3D** 按鈕，點它直接進入 Model 分頁（2026-10-23 確認） |
 
 **其他方式：**
 - **Tripo API**：`POST /v3/generation/text-to-image`（`seedream_v4`，5 點；`banana_pro` 品質較高，15 點）；之後把該任務的 `task_id` 直接當成圖生 3D 的 `input`。
@@ -122,6 +123,8 @@
 - [ ] 和風格基準圖放在一起，看起來是同一個遊戲。
 - [ ] 平放的物件底部是平的。
 - [ ] 綠色物件和香菜在輪廓上明顯不同。
+- [ ] 問自己「它還像什麼？」：不像糖果、培根、麵包、積木或寫實美食照（牛肉塊 A 試做時，前幾輪分別變成緞帶禮盒、巧克力夾心、寫實照片）。
+- [ ] 轉成灰階後，主體和細節（例如肌腱）的明度差仍分得出來。
 
 沒通過就改 prompt 重新產生，**不要拿不合格的圖去生成 3D**。2D 圖便宜很多，在這一步多試幾次比較省。
 
@@ -148,6 +151,8 @@
 | `P2-20260801` | P 系列下一代，原生四邊面；**目前是 Preview** | 110 | 暫不使用：Preview 版本可能變動，而且較貴 |
 
 > 官方建議正式生產時固定模型版本，避免模型更新造成風格不一致。整個專案請統一用同一個版本，換版本要記錄在 `docs/decisions.md`。
+>
+> **網頁版的對應（2026-10-23）：** Smart Mesh 分頁的 **P1.0 – Fast** 就是這裡的 P1（35 點）；P2.0 對應 P2（100 點）。網頁版下拉選單看不到完整的版本字串（例如 `P1-20260311`），資產紀錄寫介面上的名稱即可。
 >
 > **P1 不支援** `smart_low_poly`、`quad`、`generate_parts`、`geometry_quality`，送了也沒有作用；P1 的面數直接由 `face_limit` 控制。
 
@@ -179,6 +184,37 @@
 4. **同一個物件生成 3 次還不滿意，就回到步驟 ② 改參考圖**，不要一直重抽浪費點數。常見原因：視角太斜、物件被切到、背面形狀看不出來（改用多視角）。
 5. 失敗或取消的任務不扣點；P 系列同時最多 5 個任務並行。
 
+### 4.3a 網頁版的免費重試
+
+網頁版生成幾何後，底部工具列有 **Free Retry (×3)**：同一張參考圖可以免費重新生成幾何 3 次。所以先用免費重試挑出最好的幾何，**再**按 Texture 付貼圖的點數。
+
+### 4.3b 網頁版（Tripo Studio）的實際操作（2026-10-23 牛肉塊 A 驗證）
+
+網頁版和上面的 API 規格有出入，以這一節為準。
+
+**兩個生成分頁：**
+
+| 分頁 | AI Model 選項 | 點數（單次） | 備註 |
+|---|---|---|---|
+| **Smart Mesh** | **P1.0 – Fast**、P2.0 | P1.0：**35**；P2.0：100（Number of Generation 1／2／4 都是 100） | **本專案用 P1.0 – Fast**。選 P1.0 時沒有 Number of Generation，一次 1 個 |
+| HD Model | H3.1（Best Quality）、H3.0、H2.5（Legacy） | H3.1：55 | 備案。要設定的項目多（見下） |
+
+**Smart Mesh（P1.0 – Fast）設定：** Topology = **Triangle**；Polycount = **3000**；Privacy 預設 Sharing Only（見 10.1）。此分頁**沒有**貼圖選項。
+
+**HD Model（H3.1）設定（備案）：** Polycount **3000**；PBR **關**；Texture Quality **2K**（最低）；Ultra Mesh Quality **關**；Remove Lighting **開**；Topology Triangle；AI Complete、Generate in Parts、8K Texture 關。
+
+**幾何和貼圖是兩步：** Smart Mesh 先產出只有網格的灰色模型，滿意後按底部工具列的 **Texture**（20 點）才上貼圖。貼圖想重做時，在 History 版本上再按 Texture 或使用 Texture 分頁。
+
+**預覽：** 底部有預覽光照模式。**Unlit** 顯示貼圖的真實顏色；有光照的模式會被 Tripo 的燈光染色，只能用來看形體。評估貼圖顏色用 Unlit。
+
+**History：**
+- 每次生成與貼圖都會留下一個版本（左側 History 面板）。
+- **只有「Current Version」能匯出**；點到舊版本是唯讀預覽，Export 按下去沒有任何網路請求、看起來像沒反應。要匯出舊版本，先在該版本上按還原箭頭（↩）變成 Current Version。
+- 版本保留 **7 天**，所以重要版本（幾何版、每個貼圖版）都要在期限內匯出備份。
+- 網頁版**沒有 seed 欄位**，無法用 seed 重現，資產紀錄的 Seeds 欄寫「網頁版無 seed」，改記 History 時間。
+
+**匯出：** Export 面板的欄位只有 File Name、Format、Texture Resolution。選 **GLB** 與 **512**（食物）／1024（容器）。**沒有** `pivot_to_center_bottom`、`flatten_bottom`、`export_orientation`，這些在 Blender 清理（第 6 節）處理。
+
 ### 4.4 替代方案：整盤生成再切割
 
 如果想要「整盤料理」的構圖感，可以先生成整盤，再用 `mesh_segmentation`（`segmentation_granularity`：`simple`／`balanced`／`detailed`）切成零件，然後用 `mesh_completion`（`ai_completion`）補上被遮住的面。這條路線結果較不穩定，**只建議用來做非互動的裝飾性料理**，可互動的食物還是照 4.1 一件一件生成。
@@ -201,7 +237,9 @@
 1. **匯入與比例**：匯入 `.glb`，依拆件表的實際尺寸縮放（例如牛肉塊 4 cm 長）。專案比例尺是 **1 Godot 單位 = 10 cm**（04 美術規範），所以 4 cm = 0.4 單位。套用縮放與旋轉（`Ctrl+A`）。
 2. **檢查網格**：合併重複頂點、重新計算法線、刪除浮空的碎片；確認三角面數在預算內，超出就用 Decimate 減面。
 3. **造型修正**：AI 生成常見的問題，例如底部不平、細節糊掉、左右不對稱；平放的物件底部要平，圓的物件不要有凸點，以免物理上停不穩或亂滾。
-4. **貼圖**：檢查顏色是否符合 Q 版色調、有沒有烘進陰影或高光；需要時在 Blender 或繪圖軟體修色。貼圖尺寸：食物 512²、容器 1024²。
+   - 平坦的大面（例如牛肉塊的切面）常被切成從中心點放射的扇形三角形：畫面與物理都不受影響；出現怪陰影時，用 Flat Shading 或重新整理那個面。
+   - 凹進去的切面會讓香菜掛點懸空（碰撞凸包會把凹槽填平）；把切面推到和外皮邊緣齊平，或避開這個面放掛點。
+4. **貼圖**：檢查顏色是否符合 Q 版色調、有沒有烘進陰影或高光；需要時在 Blender 或繪圖軟體修色（例如外皮偏橘時降飽和、往褐色調）。可以烘一層 AO（環境光遮蔽）讓凹縫更有層次，AO 不依賴光的方向，翻面時不會出錯。貼圖尺寸：食物 512²、容器 1024²。
 5. **物理碰撞**：建立 1–4 個凸包（可以用 Blender 內建的 Convex Hull，或 V-HACD 等凸包分解外掛），**物件名稱加上 `-convcolonly` 後綴**，例如 `food_beef_chunk_a-convcolonly`；Godot 匯入時會自動變成碰撞形狀，而且不會被渲染。容器的凹面內側用 `-colonly`（三角網格碰撞，只能用在固定物件）。
 6. **重心**：如果重心需要偏移（例如水餃要平底朝下），加一個名為 `CenterOfMass` 的空物件，程式會讀取它的位置設定剛體的 `center_of_mass`。
 7. **香菜掛點**：依拆件表和關卡設計的需求，在表面加空物件（Empty），命名 `Anchor_<食物>_<面>_<序號>`，例如 `Anchor_BeefChunk_Bottom_01`；Z 軸（或 Y 軸，和程式約定）朝外，貼齊表面。
@@ -264,11 +302,24 @@
 
 - **API（開發者平台）：** [服務條款](https://developers.tripo3d.ai/en/terms) 3.2 節寫明，產出的模型可以用於合法的商業或非商業用途。但 Tripo **不保證產出是獨一無二的**，其他使用者可能得到相似的結果，所以招牌角色或商標類的造型不要只依賴 AI 生成。
 - **Tripo Studio（網頁版）：** 第三方整理的資料指出免費方案的模型是公開的（CC BY 4.0）、不能商用，付費方案才有私人模型與商業授權。這部分的官方條款在 `www.tripo3d.ai`，**目前還沒核對**，用 Studio 生成正式資產前請先確認。
+  - 專案帳號是 **Pro** 方案（2026-10-23 確認），但 Privacy 預設仍是 **Sharing Only**（公開分享）。正式資產生成前，確認 Privacy 可改成 Private 並改掉；Pro 方案是否含商業使用權，待核對條款並寫進 `docs/decisions.md`。
+  - 牛肉塊 A（風格基準物件）是在 Sharing Only 下生成的試做模型，正式放進遊戲前要處理授權問題（重新以私人生成，或確認條款允許）。
 - 不論用哪個管道，都要在資產紀錄寫上使用的管道與方案。
 
 ### 10.2 點數價格
 
-**網頁版：** 點數另計，以介面顯示為準。2026-10-23 的截圖中，Image 分頁用 Nano Banana 產生 4 張圖顯示 40 點（約每張 10 點）。
+**網頁版：** 點數另計，以介面顯示為準（2026-10-23）：
+
+| 項目 | 點數 |
+|---|---:|
+| Image 分頁：Nano Banana 4 張 | 40 |
+| Smart Mesh：P1.0 – Fast 幾何 | 35 |
+| Smart Mesh：P2.0 幾何（1／2／4 張同價） | 100 |
+| HD Model：H3.1 幾何（單次） | 55 |
+| Texture（幾何完成後上貼圖） | 20 |
+| Free Retry（幾何重試，每次生成最多 3 次） | 0 |
+
+牛肉塊 A 的實際花費：P1.0 幾何 35 + 貼圖 20 ×（上了幾次，待補），再加參考圖點數（待補）。
 
 **API（2026-10-21 官方定價）：**
 
@@ -315,14 +366,14 @@
 
 | 左側分頁 | 對應流程 | 已確認 | 待確認 |
 |---|---|---|---|
-| **Image** | ② 參考圖 | Prompt 輸入框（上限 10,000 字元，沒有負面欄位）、Generation Model（Nano Banana；GPT Image 2.5 需升級）、Aspect Ratio（1:1／16:9／9:16／4:3／3:4）、Number of Images（1–4）、4K Resolution 開關；產生 4 張顯示 40 點 | 輸入框左下角圖片按鈕是否為上傳參考圖；Templates 的用途 |
-| **Model** | ③ 圖片生成 3D | — | 如何把 Image 分頁的結果直接帶過來；模型版本選項名稱（P1／H3.1）；面數上限、貼圖品質、PBR、去除光影（delight）、智慧低面數的對應選項；多視角輸入；seed 是否顯示 |
+| **Image** | ② 參考圖 | Prompt 輸入框（上限 10,000 字元，沒有負面欄位）、Generation Model（Nano Banana、GPT Image 2、GPT Image 2.5；**專案固定 GPT Image 2**）、Aspect Ratio（1:1／16:9／9:16／4:3／3:4）、Number of Images（1–4）、4K Resolution 開關；選中圖片後右下角有 **Generate 3D** 按鈕直接進 Model 分頁 | 輸入框左下角圖片按鈕是否為上傳參考圖；Templates 的用途 |
+| **Model** | ③ 圖片生成 3D | 分成 **Smart Mesh**（P1.0 – Fast／P2.0）與 **HD Model**（H3.1／H3.0／H2.5）兩個分頁；Topology（Triangle／Quad）、Polycount（Smart Mesh 500–50000；HD 500–2000000）；HD Model 有 Ultra Mesh Quality、Texture Quality（2K／4K／8K）、Remove Lighting、PBR、AI Complete、Generate in Parts；Privacy；生成的幾何與貼圖是兩步（見 4.3b）；無 seed 欄位；Free Retry ×3 | Generate Multi-Views 的實際行為（牛肉塊 A 不需要，沒有試） |
 | **Segment** | 4.4 整盤切割（不建議） | — | — |
 | **Retopo** | ④ 重新拓撲 | — | 面數設定、三角面／四邊面選項 |
 | **Smart UV** | ④ Smart UV | — | — |
-| **Texture** | ④ 重新上貼圖 | — | 是否能指定貼圖模型版本與去除光影 |
+| **Texture** | ④ 重新上貼圖 | 幾何完成後，底部工具列的 Texture 按鈕（20 點） | Texture 分頁的選項；是否能指定貼圖模型版本與文字提示（牛肉塊 A 做過兩次貼圖，第二次的設定待補） |
 | **Rig** | 不使用 | — | — |
-| 下載／匯出 | ④ 轉檔 | — | 能否選 GLB、貼圖尺寸、原點到底部中心、底部壓平 |
+| 下載／匯出 | ④ 轉檔 | Export 面板：File Name、Format（GLB）、Texture Resolution（512）；**沒有**原點到底部中心、底部壓平、方向選項；只有 Current Version 能匯出（見 4.3b） | Format 下拉的完整清單；Send to（面板上的另一個按鈕）的用途；頂端的 DCC Bridge 的用途 |
 
 Studio（網頁版）的授權條款也還沒核對，見 10.1。
 

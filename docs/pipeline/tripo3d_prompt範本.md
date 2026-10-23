@@ -62,6 +62,15 @@ watermark, cropped, blurry, low quality
 
 > 生成容器時拿掉 `plate, bowl`，改加 `food, soup, liquid`。Tripo API 的 `negative_prompt` 上限 255 字元；上面約 200 字元。
 
+### 1.5 玩具收尾 `TOY`（每個物件描述的最後一句）
+
+```text
+Rendered like a hand-sculpted clay toy of {物件英文名}, simplified shapes, flat painted colors,
+dull matte surface, simplified soft grain.
+```
+
+> 為什麼需要：物件描述寫得越細（撕裂邊緣、纖維、醬汁），圖像模型越往寫實走，`STYLE` 會被蓋過。2026-10-23 牛肉塊 A 的試做中，沒有 `TOY` 時產出的是帶濕亮醬汁的寫實美食照；加上 `TOY` 並換成 GPT Image 2 之後才回到黏土玩具感。位置：放在物件描述之後、`ISOLATE` 之前。`simplified soft grain` 只適用有紋理的食物；沒有紋理的物件（碗、麵條團）刪掉這三個字。
+
 ---
 
 ## 2. 參考圖 prompt（步驟 ②）
@@ -70,7 +79,7 @@ watermark, cropped, blurry, low quality
 
 ```text
 {STYLE}.
-A single {物件英文名} ({物件說明}): {造型重點}, {顏色重點}, {底部描述}.
+A single {物件英文名} ({物件說明}): {造型重點}, {顏色重點}, {底部描述}. {TOY}
 {ISOLATE（食物用）}, {SHOT}.
 ```
 
@@ -118,6 +127,29 @@ the same object as the reference image, identical style, size, colors and lighti
 
 `{view}` 依序填 `left side`、`back`、`right side`。四張圖的物件大小要一致；不一致就重新生成。多視角生 3D 至少要 2 張（正面必填）。
 
+### 2.5 寫物件描述的經驗（2026-10-23，牛肉塊 A 試做 5 輪的結論）
+
+**固定圖像模型。** 整個專案用 **GPT Image 2**。同一份 prompt，GPT Image 2.5 會變得濕亮、像焦糖；GPT Image 2 偏霧面黏土。
+
+**避開會被誤判成其他食物的詞：**
+
+| 不要寫 | 會變成 | 改寫成 |
+|---|---|---|
+| `cube`、`rectangular` | 骰子、積木 | `thick chunky piece`、`plump rounded block` + `lumpy`、`uneven` |
+| `tendon stripe`、`band`、`layer` | 繞一圈的緞帶、千層糕 | `a few thin light-tan tendon lines on the wide cut face`（寫位置，用 `thin lines`） |
+| `flower shape`、`inset`、`jelly`、`amber` | 焦糖、糖果頂飾 | 不要把肌腱寫成裝飾圖案 |
+| `mahogany` | 巧克力 | `soy-braised brown` |
+| `reddish brown`（單獨使用） | 生肉、培根 | `deep reddish brown` 搭配 `soy-braised brown` 的外皮 |
+| `fibrous edges`、`torn-looking`、`glossy` | 木紋、寫實濕亮美食照 | `simplified soft grain` + 第 1.5 節的 `TOY` |
+
+**其他原則：**
+
+1. 細節用「位置 + 尺寸」限定（`on the wide cut face`、`thin`），不要用抽象名詞。
+2. 每次只改一個變因（模型、顏色或形狀擇一），才看得出是哪個改動有效。
+3. 選圖時多問一句「它還像什麼？」（糖果、培根、麵包、積木），有就不合格。
+4. 底部在 3/4 視角看不到，選圖後在 3D 預覽階段確認；必要時 prompt 加 `flat bottom resting on the ground`。
+5. 基準物件選「穩定、單純」的造型，不一定選最有魅力的（見第 5.1 節）。
+
 ---
 
 ## 3. Tripo 重新上貼圖 prompt（貼圖重生成的文字提示）
@@ -128,6 +160,10 @@ evenly lit surface without baked shadows or highlights
 ```
 
 > 用途：模型造型滿意，但貼圖有烘進去的陰影、太寫實或太油時使用。先試試把貼圖模型設為 `v3.5-20260815` 並開啟 `delight`（去除參考圖的光影），通常就能解決陰影問題。
+>
+> **顏色太單調時**（牛肉塊 A 的外皮變成一片橘色），在文字提示的 `{顏色重點}` 寫出深淺：`subtle darker crevices and slightly lighter bumps`，並加上 `soft color variation`。**不要關掉 Remove Lighting**，否則參考圖的光影會烘進貼圖，食物翻面時陰影方向會錯。還是太平，就到 Blender 修色，並烘一層 AO（環境光遮蔽不依賴光的方向，可以安全烘進貼圖）。
+>
+> **看顏色時用 Tripo 預覽的 Unlit 模式**：有光照的預覽會被 Tripo 的燈光染色，不是貼圖的真實顏色；Unlit 看到的才是貼圖本身。
 
 ## 4. 文字直接生 3D（僅供比較，不用於正式資產）
 
@@ -167,15 +203,20 @@ cute stylized 3D game asset, toy-like, soft clay and matte vinyl look, chunky ro
 softened edges, slightly exaggerated proportions, simple clean silhouette, hand-painted soft
 colors, gentle color gradients, minimal surface detail, smooth clean surfaces, matte finish
 with soft subtle highlight.
-A single braised beef chunk (from Taiwanese beef noodle soup): irregular rounded cube shape,
-a soft translucent tendon layer on one side, slightly fibrous edges, warm reddish brown with a
-lighter beige tendon stripe, flat stable bottom.
+A single braised beef chunk (from Taiwanese beef noodle soup): a thick chunky piece of
+slow-braised beef with a lumpy rounded outline, a matte soy-braised brown crust with a few soft
+rounded bumps, one wide cut face showing a few soft parallel muscle grain lines in deep
+reddish brown and a few thin light-tan tendon lines, flat stable bottom. Rendered like a
+hand-sculpted clay toy of braised beef, simplified shapes, flat painted colors, dull matte
+surface, simplified soft grain.
 The braised beef chunk is the only object in the image, isolated and floating alone on the
 white background, centered, fully visible, filling about 75% of the frame, 3/4 top-down view
 at 30 degrees, on a plain pure white background, soft even studio lighting, shadowless.
 ```
 
-以下物件都要**上傳牛肉塊 A 的圖當參考**，並在最前面加上 2.3 的風格參考段落。
+> 這是 2026-10-23 試做 5 輪後定案的版本（圖像模型：GPT Image 2）。前幾輪的失敗原因（變成緞帶、巧克力、寫實美食照）見第 2.5 節。選用的基準圖：第 5 輪的第 1 張（長方塊、切面兩條細肌腱）；它醬色外皮偏橘，之後用貼圖修色即可，不必重畫。
+
+以下物件都要**上傳牛肉塊 A 的圖當參考**，並在最前面加上 2.3 的風格參考段落。每個物件描述的最後都要接第 1.5 節的 `TOY`（下面的範例已寫入）。
 
 **麵條團**（正面圖挑好後，再做多視角）
 ```text
@@ -183,7 +224,8 @@ at 30 degrees, on a plain pure white background, soft even studio lighting, shad
 {STYLE}.
 A single clump of thick wheat noodles (from Taiwanese beef noodle soup): loosely coiled into a
 soft oval nest, noodles simplified into a few thick smooth rounded strands that merge together,
-creamy pale yellow with slightly darker strand gaps, flat bottom.
+creamy pale yellow with slightly darker strand gaps, flat bottom. Rendered like a hand-sculpted
+clay toy of a noodle clump, simplified shapes, flat painted colors, dull matte surface.
 The clump of noodles is the only object in the image, isolated and floating alone on the white
 background, {SHOT}.
 ```
@@ -194,7 +236,8 @@ background, {SHOT}.
 {STYLE}.
 A single baby bok choy cut in half lengthwise: thick pale green-white stem at the bottom fanning
 into a few broad rounded dark green leaves at the top, clear stem and leaf separation, flat cut
-side facing down.
+side facing down. Rendered like a hand-sculpted clay toy of baby bok choy, simplified shapes,
+flat painted colors, dull matte surface.
 The baby bok choy is the only object in the image, isolated and floating alone on the white
 background, {SHOT}.
 ```
@@ -207,7 +250,8 @@ background, {SHOT}.
 {STYLE}.
 A single empty deep ceramic noodle bowl: wide round opening, gently curved walls, thick rounded
 rim, smooth inner surface clearly visible, off-white glaze with a simple blue band pattern near
-the rim, flat stable base.
+the rim, flat stable base. Rendered like a hand-sculpted clay toy of a noodle bowl, simplified
+shapes, flat painted colors, dull matte surface.
 The empty noodle bowl is the only object in the image, clean and completely empty inside,
 isolated on the white background, {SHOT}.
 ```
@@ -224,6 +268,8 @@ isolated on the white background, {SHOT}.
 | 麵碗 | 圖片生 3D | `P1-20260311` | 5000 | 同上，或 Blender 旋轉成形 | `texture_size: 1024`、`pivot_to_center_bottom: true`、`flatten_bottom: true` |
 
 預估點數見流程文件 10.3。
+
+> **網頁版（Smart Mesh 分頁）的實際操作**（2026-10-23 牛肉塊 A）：AI Model 選 **P1.0 – Fast**（35 點）、Topology 選 Triangle、Polycount 3000。網頁版的幾何與貼圖是**兩個步驟**：先生成幾何，滿意後才按 Texture（20 點）。詳見流程文件第 4.3b 節與第 12 節。
 
 ---
 
@@ -254,15 +300,23 @@ isolated on the white background, {SHOT}.
    "Match the art style of the reference image exactly: same materials, same color saturation,
    same lighting, same level of detail and the same degree of roundness. Do not copy its shape;
    create a different object as described below."
-7. 每個 Tripo 物件寫出完整的英文參考圖 prompt，格式為：STYLE. 物件描述. ISOLATE, SHOT.
+7. 每個 Tripo 物件寫出完整的英文參考圖 prompt，格式為：STYLE. 物件描述. TOY ISOLATE, SHOT.
    物件描述包含物件名、造型重點 2–3 個、顏色與明度、底部形狀。
-   STYLE、SHOT 一字不改地使用以下內容：
+   描述的用詞限制（避免模型誤判成別的食物）：
+   - 不寫 cube、rectangular、stripe、band、layer、flower、inset、jelly、amber、mahogany、
+     fibrous、glossy；肉色用 deep reddish brown 與 soy-braised brown，不要單獨寫 reddish brown。
+   - 肌腱、紋路這類細節要寫位置與尺寸，例如 "a few thin light-tan lines on the wide cut face"。
+   - 每個物件描述的最後都要接 TOY，否則會變成寫實照片。
+   - 整個專案固定用 GPT Image 2 產生參考圖。
+   STYLE、SHOT、TOY 一字不改地使用以下內容：
    STYLE = "cute stylized 3D game asset, toy-like, soft clay and matte vinyl look, chunky rounded
    shapes, softened edges, slightly exaggerated proportions, simple clean silhouette,
    hand-painted soft colors, gentle color gradients, minimal surface detail, smooth clean
    surfaces, matte finish with soft subtle highlight"
    SHOT = "centered, fully visible, filling about 75% of the frame, 3/4 top-down view at 30 degrees,
    on a plain pure white background, soft even studio lighting, shadowless"
+   TOY = "Rendered like a hand-sculpted clay toy of {物件英文名}, simplified shapes, flat painted
+   colors, dull matte surface, simplified soft grain."（沒有紋理的物件刪掉 simplified soft grain）
    ISOLATE（食物）= "the {物件英文名} is the only object in the image, isolated and floating alone
    on the white background"
    ISOLATE（容器）= "the empty {容器英文名} is the only object in the image, clean and completely
@@ -302,7 +356,9 @@ isolated on the white background, {SHOT}.
 | 問題 | 調整方式 |
 |---|---|
 | 圖中出現盤子、桌子、筷子 | 確認 prompt 裡沒有列出這些詞（包括負面描述）；加強 `ISOLATE` 描述 |
-| 太寫實、太油亮 | 加重 `matte, clay, toy` 的描述；改用風格基準圖當參考 |
+| 太寫實、太油亮 | 確認有加第 1.5 節的 `TOY`；圖像模型改回 GPT Image 2（2.5 會濕亮）；改用風格基準圖當參考 |
+| 變成巧克力、糖果、培根、緞帶、骰子 | 查第 2.5 節的「避開的詞」表；肌腱不要寫成 stripe、band、flower |
+| 貼圖顏色單調、外皮一整片單色 | 見第 3 節：顏色重點寫出深淺並加 `soft color variation`；先用 Unlit 預覽確認是貼圖還是預覽的問題；不要關 Remove Lighting |
 | 細節糊成一團（例如麵條） | 在描述中**主動簡化**：`simplified into a few thick strands`，不要要求細節 |
 | 底部不平、放不穩 | 描述加 `flat stable bottom`；轉檔時開 `flatten_bottom` |
 | 同一道料理風格不一致 | 確認每個物件都上傳了風格基準圖，並加了 2.3 的風格參考段落；所有物件用同一個圖像模型 |
