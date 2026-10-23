@@ -1,7 +1,7 @@
 # Tripo3D 料理建模流程
 
 **用途：** 新增一道「可互動料理」時，從拆件、生成、清理到放進 Godot 的標準流程。每道料理都照這份流程走一次。
-**配套文件：** [`tripo3d_prompt範本.md`](tripo3d_prompt範本.md)（所有 prompt）、企劃書 v1.1 第 4、7 章、`docs/roles/04_3D美術.md`。
+**配套文件：** [`tripo3d_prompt範本.md`](tripo3d_prompt範本.md)（所有 prompt）、企劃書第 4、7 章、`docs/roles/04_3D美術.md`。
 
 > **資料來源（2026-10-21 核對）：** 參數、模型版本、點數價格與 API 授權條款都已對照 [Tripo 開發者文件](https://developers.tripo3d.ai/en/docs/introduction) 與 [API 定價頁](https://developers.tripo3d.ai/en/pricing)。Tripo Studio（網頁版）的訂閱方案條款在 `www.tripo3d.ai`，目前無法從這個環境讀取，仍需自行確認。Tripo 更新頻繁，正式生產時請**固定模型版本**，並定期重新核對。
 >
@@ -40,7 +40,7 @@
 
 ## 2. 步驟 ① 拆件規劃
 
-用下面的表格把料理拆成物件。**這張表決定了要生成哪些模型**，填完要給企劃和關卡設計確認。
+用下面的表格把料理拆成物件。**這張表決定了要生成哪些模型**，填完要給企劃和關卡設計確認。`dish_id` 照企劃書 3.1 的料理清單填寫；清單上沒有的料理，先請遊戲企劃登記（命名權責見 `docs/roles/00_共同規範.md`）。
 
 ```markdown
 ## 料理拆件表：<料理名稱>（<dish_id>）

@@ -79,4 +79,4 @@
 | M5 美術與打磨 | 04 美術、07 音效 | 06 程式、05 UI/UX | 灰盒資產全部替換，回饋完整 |
 | M6 測試與交付 | 08 QA | 全員 | 附錄 A 完成定義全部打勾，沒有 P0／P1 bug |
 
-> 決策紀錄：[`docs/decisions.md`](../decisions.md)。企劃書目前版本：v1.1。
+> 決策紀錄：[`docs/decisions.md`](../decisions.md)。企劃書目前版本：v1.2。

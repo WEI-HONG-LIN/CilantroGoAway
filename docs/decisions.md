@@ -64,3 +64,10 @@
 - 代價：雲端 session 看不到程式與資產，實作工作要在使用者電腦上的 session 進行；程式與資產沒有雲端備份與版本紀錄，需要自行備份。之後若改為上傳，要加回 LFS 規則並修改 `.gitignore`。
 - 影響角色：全部
 - 已更新：`.gitignore`、`.gitattributes`、`CLAUDE.md`、企劃書 5.1、`docs/pipeline/tripo3d_料理建模流程.md`、`docs/roles/04_3D美術.md`、`docs/roles/07_音效設計.md`、`.claude/agents/artist-3d.md`、`.claude/agents/sound-designer.md`
+
+## D-20261023-03 共用 ID 的命名權責
+- 問題：`dish_id` 等會被多個角色引用的 ID，沒有規定由誰決定
+- 決定：由最上游的角色決定並寫進文件，其他角色照用。`dish_id` 與關卡 ID 由遊戲企劃決定，登記在企劃書 3.1「料理清單」；物件 ID 由 3D 美術在拆件表提出、遊戲企劃定案；香菜掛點由關卡設計決定；訊號、類別、腳本由遊戲邏輯程式決定；音效檔名由音效設計決定。MVP 的 `dish_id`：`braised_pork_rice`、`dumplings`、`beef_noodle_soup`、`combo_set`。
+- 理由：`dish_id` 同時用在料理場景、美術資料夾、關卡資料與拆件表，改名的影響範圍大，必須在最上游先定案。
+- 影響角色：全部
+- 已更新：企劃書 v1.2（3.1 料理清單）、`docs/roles/00_共同規範.md`（命名權責）、`docs/pipeline/tripo3d_料理建模流程.md`
