@@ -41,7 +41,8 @@ Godot 4.5（GDScript、Jolt Physics）的 3D Q 版休閒尋物遊戲：玩家把
 - 不要直接推到 `main`。每個任務開一個分支：`role/<agent 名稱>-<任務>`，例如 `role/gameplay-programmer-m0-physics`。
 - 一個分支只做一件事；完成後開 PR 到 `main`，PR 描述使用 `00_共同規範.md` 的「交付」格式。
 - 開工前與開 PR 前都先 `git pull origin main`（或 rebase），減少衝突。
-- 二進位資產（`.glb`、`.png`、`.wav`、`.ogg`）用 Git LFS；`.godot/` 不進版控。
+- 二進位資產（模型、圖片、音效、字型等）由 `.gitattributes` 自動交給 Git LFS 管理，第一次使用前要在電腦上執行一次 `git lfs install`；`.godot/` 不進版控（見 `.gitignore`）。
+- 只留在本機、不上傳的檔案放在 `art/_local/`，例如 Tripo 原始下載檔、試做的參考圖、草稿。
 
 ## 目前進度
 

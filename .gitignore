@@ -1,0 +1,28 @@
+# Godot 4
+.godot/
+*.translation
+/android/
+
+# 匯出的遊戲
+/build/
+/export/
+
+# 美術：只留在本機的檔案
+# Tripo 原始下載、試做的參考圖、草稿都放在 art/_local/，不上傳
+art/_local/
+# Blender 自動備份
+*.blend1
+*.blend2
+
+# Claude Code
+.claude/settings.local.json
+.claude/worktrees/
+
+# 機密資料
+.env
+.env.*
+
+# 作業系統
+.DS_Store
+Thumbs.db
+desktop.ini
