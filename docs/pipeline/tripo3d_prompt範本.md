@@ -23,13 +23,13 @@
 ### 1.1 風格描述 `STYLE`
 
 ```text
-cute stylized 3D game asset, toy-like, soft clay and matte vinyl look, chunky rounded shapes,
-softened edges, slightly exaggerated proportions, simple clean silhouette, hand-painted soft
-colors, gentle color gradients, minimal surface detail, smooth clean surfaces, matte finish
-with soft subtle highlight
+cute stylized 3D game asset, toy-like, soft clay look, chunky rounded shapes, slightly
+exaggerated proportions, simple clean silhouette, hand-painted colors, matte finish
 ```
 
-> 意思：可愛 Q 版、玩具感、黏土或霧面軟膠質感、圓潤厚實、邊角柔和、比例略誇張、輪廓簡潔、手繪柔和配色、少量細節、表面乾淨、霧面。對應企劃書 4.1。
+> 意思：可愛 Q 版、玩具感、黏土質感、圓潤厚實、比例略誇張、輪廓簡潔、手繪配色、霧面。對應企劃書 4.1。
+>
+> **2026-10-23 修改（決策 D-20261023-04）：** 舊版寫了 `smooth clean surfaces, minimal surface detail, soft subtle highlight`，和風格基準圖（牛肉塊 A：表面有燉煮的凹凸與肌理、深色、霧面）互相矛盾，產生的圖會變得光滑、偏亮、像軟膠玩具。表面細節改由每個物件的「表面質感」欄位描述（2.1）。
 
 ### 1.2 構圖與光線 `SHOT`
 
@@ -70,7 +70,8 @@ watermark, cropped, blurry, low quality
 
 ```text
 {STYLE}.
-A single {物件英文名} ({物件說明}): {造型重點}, {顏色重點}, {底部描述}.
+A single {物件英文名} ({物件說明}): {造型重點}, {表面質感}, {顏色重點},
+dull matte surface without shine, {底部描述}.
 {ISOLATE（食物用）}, {SHOT}.
 ```
 
@@ -78,8 +79,9 @@ A single {物件英文名} ({物件說明}): {造型重點}, {顏色重點}, {�
 |---|---|---|
 | 物件英文名 | 具體的名詞 | `braised beef chunk` |
 | 物件說明 | 一句話描述它在料理中的樣子 | `from Taiwanese beef noodle soup` |
-| 造型重點 | 2–3 個能被認出來的特徵 | `irregular rounded cube shape, a soft tendon layer on one side` |
-| 顏色重點 | 主色 + 輔色，寫出明度 | `warm reddish brown with a lighter beige tendon stripe` |
+| 造型重點 | 2–3 個能被認出來的特徵 | `a thick flattened wedge-shaped slab, rounded edges` |
+| 表面質感 | 和基準圖同等級的細節；用「a few」「subtle」「gentle」控制程度（2.3） | `slightly uneven with a few gentle braised bumps and subtle muscle fiber lines` |
+| 顏色重點 | 主色 + 輔色，寫出明度 | `deep dark reddish brown, the tendon a muted amber beige` |
 | 底部描述 | 平底或圓底（影響物理） | `flat stable bottom` 或 `rounded bottom` |
 
 ### 2.2 容器範本
@@ -91,19 +93,16 @@ A single empty {容器英文名}: {造型重點}, thick rounded rim, smooth inne
 {ISOLATE（容器用）}, {SHOT}.
 ```
 
-### 2.3 用風格基準圖產生其他物件（流程文件 3.2）
+### 2.3 用文字對齊風格基準圖（流程文件 3.2）
 
-每道料理的第一個物件做好之後，就是**風格基準圖**。之後的物件都要**上傳風格基準圖當參考**，並在 prompt 最前面加上這段：
+Tripo 網頁版 Image 分頁**不能上傳參考圖**（2026-10-23 確認），所以基準物件以外的物件，靠文字把質感寫得和基準圖一樣：
 
-```text
-Match the art style of the reference image exactly: same materials, same color saturation,
-same lighting, same level of detail and the same degree of roundness. Do not copy its shape;
-create a different object as described below.
-```
-
-後面接 2.1 或 2.2 的完整 prompt。
-
-> Tripo 網頁版 Image 分頁的輸入框左下角有圖片按鈕，應該就是上傳參考圖的地方；實際行為還沒確認，見流程文件第 12 節。
+1. **表面質感**：基準圖（牛肉塊 A）是「微微不平、少量柔和凸起、細肌理」。其他物件寫同等級的細節，例如 `slightly uneven`、`a few subtle vein lines`。
+2. **顏色**：偏深、偏沉的自然色，不要亮橘、亮綠；寫 `deep`、`muted`。
+3. **霧面**：一律加 `dull matte surface without shine`。
+4. **不要寫過頭**：`lumpy`、`knobbly`、`many bumps` 這類詞會讓整個物件被凹凸蓋過，連造型都跑掉（牛肉塊 B 第 2 版的教訓）。
+5. **一次只改一個地方**：風格對了但比例不對（例如筋太寬）時，只改那一句，其他字不動。
+6. 文字試 3 批還對不齊，改用能上傳參考圖的工具（流程文件 3.2 第 4 點）。
 
 ### 2.4 多視角（背面形狀複雜時）
 
@@ -148,69 +147,157 @@ isolated single object, game-ready low poly prop, closed watertight mesh, solid 
 
 | # | 物件 ID | 中文名 | 類型 | 數量 | 尺寸（cm） | 生成方式 | 碰撞 | 密度 | 進湯 | 掛點面 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | bowl_noodle | 麵碗 | 容器 | 1 | 18×18×8 | Tripo 圖生（或 Blender 旋轉成形） | 凹面 `-colonly` | — | — | — |
-| 2 | food_beef_chunk_a／_b | 牛肉塊（2 種造型） | 食物 | 3 | 4×3×2.5 | Tripo 圖生 | 凸包 ×1 | 1.1 | 是 | Top／Side／Bottom |
-| 3 | food_noodle_clump_a／_b | 麵條團（2 種造型） | 食物 | 2–3 | 6×5×2 | Tripo 多視角 | 凸包 ×2 | 1.08 | 是 | Top／Bottom |
-| 4 | food_bok_choy | 青江菜 | 食物 | 2 | 7×3×1.5 | Tripo 圖生 | 凸包 ×2 | 0.9 | 是 | Side |
-| 5 | decoy_scallion | 蔥花 | 誘餌 | 6–10 | 0.6×0.6×0.3 | Blender 手工 | 凸包 ×1 | 0.7 | 是 | — |
-| 6 | cilantro_* | 香菜 | 目標 | — | — | 共用模型 | — | 0.6／1.05 | 是 | — |
+| 1 | bowl_noodle | 麵碗 | 容器 | 1 | 18×18×8 | Blender 旋轉成形（已完成） | 凹面 `-colonly` | — | — | — |
+| 2 | food_beef_chunk_a／_b | 牛肉塊（A 圓潤方塊、B 扁楔形） | 食物 | 3 | 4×3×2.5 | Tripo 圖生（已清理匯出） | 凸包 ×1 | 1.1 | 是 | Top／Side／Bottom |
+| 3 | food_noodle_clump_a／_b | 麵條團（2 種造型） | 食物 | 2–3 | 6×5×2 | Tripo 單張圖生（已清理匯出） | 凸包 ×2 | 1.08 | 是 | Top／Bottom |
+| 4 | food_bok_choy_leaf_a／_b | 青江菜葉（A 大外葉、B 小內葉；單片，不是整把） | 食物 | 2 | 8×5.5×1.5／4.4×6×1.4 | Tripo 圖生（已清理匯出） | 凸包 ×2 | 0.9 | 是 | Top／Bottom |
+| 5 | decoy_scallion_a／_b／_c | 蔥花（A 圓圈、B 斜切橢圓、C 薄片；已完成，`art/models/shared/`，牛肉麵與水餃共用） | 誘餌 | 6–10 | 0.6×0.6×0.22 | Blender 手工 | 凸包 ×1 | 0.7 | 是 | — |
+| 6 | cilantro_full／_small／_fragment | 香菜（完整葉、小葉、碎葉；亮綠／深綠／浸濕，已完成，`art/models/shared/cilantro/`，全遊戲共用） | 目標 | — | 2.1×2.9／1.5×1.4／0.7×0.8 | Tripo 圖生＋Blender 減面（D-20261023-07） | 凸包 ×1 | 0.6／1.05 | 是 | — |
+| 7 | bowl_soup_small | 小湯碗（1-6 套餐的小碗牛肉湯） | 容器 | 1 | 12×12×6 | Blender，麵碗縮放（已完成） | 凹面 `-colonly` | — | — | — |
+| 8 | deco_noodle_strands_a～_d | 裝飾散麵（掛在麵條團與碗緣，不能互動） | 裝飾（固定） | 3–5 | 長 8–12，粗 0.5 | Blender 沿曲線手工（已完成） | 無 | — | — | — |
 
 湯：牛肉湯預設，混濁度 0.6，液面高度在碗高的 70%。
 
-**風格基準物件：牛肉塊 A。** 它的造型最單純、最容易做好，做好之後其他物件都以它的圖為參考。
+麵條維持「麵條團」，不做單根可互動的麵條（2026-10-23 使用者確認，維持 D-20261020-02）；散麵只是裝飾，單根軟麵列為 MVP 後的擴充。
 
-### 5.2 參考圖 prompt（可以直接貼進 Tripo 網頁版 Image 分頁）
+**風格基準物件：牛肉塊 A**（`art/source/style_anchor/beef_noodle_soup_beef_chunk_a.png`，GPT Image 2）。全遊戲的風格都以它為準。
 
-**牛肉塊 A（風格基準物件，不需要上傳參考圖）**
+### 5.2 參考圖 prompt（可以直接貼進 Tripo 網頁版 Image 分頁，Generation Model 選 GPT Image 2）
+
+**牛肉塊 A（風格基準物件）**：用舊版 `STYLE` 產生，prompt 不再使用；之後要重做 A 時，用牛肉塊 B 的 prompt 把造型改回「irregular rounded cube shape, one flat cut face showing dark red muscle fibers with thin pale beige tendon lines」。
+
+**牛肉塊 B**（2026-10-23 定案）
 ```text
-cute stylized 3D game asset, toy-like, soft clay and matte vinyl look, chunky rounded shapes,
-softened edges, slightly exaggerated proportions, simple clean silhouette, hand-painted soft
-colors, gentle color gradients, minimal surface detail, smooth clean surfaces, matte finish
-with soft subtle highlight.
-A single braised beef chunk (from Taiwanese beef noodle soup): irregular rounded cube shape,
-a soft translucent tendon layer on one side, slightly fibrous edges, warm reddish brown with a
-lighter beige tendon stripe, flat stable bottom.
+cute stylized 3D game asset, toy-like, soft clay look, chunky rounded shapes, slightly
+exaggerated proportions, simple clean silhouette, hand-painted colors, matte finish.
+A single braised beef chunk (from Taiwanese beef noodle soup): a thick flattened wedge-shaped
+slab, wider at one end and tapering to the other, rounded edges, one thin narrow strip of soft
+translucent tendon near one edge of the top surface, the tendon strip only about one fifth of the
+chunk's width, the meat clearly dominant, the outer surface slightly uneven with a few gentle
+braised bumps and subtle muscle fiber lines, deep dark reddish brown like slow-braised beef,
+the tendon a muted amber beige, dull matte surface without shine, flat stable bottom.
 The braised beef chunk is the only object in the image, isolated and floating alone on the
 white background, centered, fully visible, filling about 75% of the frame, 3/4 top-down view
 at 30 degrees, on a plain pure white background, soft even studio lighting, shadowless.
 ```
 
-以下物件都要**上傳牛肉塊 A 的圖當參考**，並在最前面加上 2.3 的風格參考段落。
+**青江菜葉 A**（B 把 `a large outer leaf` 改成 `a small tender inner leaf, shorter and narrower`）
+```text
+cute stylized 3D game asset, toy-like, soft clay look, chunky rounded shapes, slightly
+exaggerated proportions, simple clean silhouette, hand-painted colors, matte finish.
+A single bok choy leaf separated from the bunch, a large outer leaf (from Taiwanese beef noodle
+soup): one thick spoon-shaped pale celadon green-white stalk at the bottom, widening into one
+broad rounded dark green leaf blade with smooth unbroken edges and a few subtle vein lines,
+the leaf blade thick and soft like clay, slightly wilted and gently curved like a cooked
+vegetable, lying flat on its back, deep muted green leaf and pale stalk, dull matte surface
+without shine, flat stable underside.
+The bok choy leaf is the only object in the image, isolated and floating alone on the white
+background, centered, fully visible, filling about 75% of the frame, 3/4 top-down view at
+30 degrees, on a plain pure white background, soft even studio lighting, shadowless.
+```
+
+> 青江菜葉是寬大圓潤、葉緣光滑的湯匙形，和香菜（扇形分叉、波浪葉緣、細葉柄的小葉）明顯不同。葉面寫成「像黏土一樣厚」，避免太薄造成 Tripo 破面。柔軟感由物理材質與 shader 呈現，不靠模型。
 
 **麵條團**（正面圖挑好後，再做多視角）
 ```text
-{2.3 風格參考段落}
-{STYLE}.
+cute stylized 3D game asset, toy-like, soft clay look, chunky rounded shapes, slightly
+exaggerated proportions, simple clean silhouette, hand-painted colors, matte finish.
 A single clump of thick wheat noodles (from Taiwanese beef noodle soup): loosely coiled into a
 soft oval nest, noodles simplified into a few thick smooth rounded strands that merge together,
-creamy pale yellow with slightly darker strand gaps, flat bottom.
+slightly uneven soft surface, creamy muted pale yellow with slightly darker strand gaps,
+dull matte surface without shine, flat bottom.
 The clump of noodles is the only object in the image, isolated and floating alone on the white
-background, {SHOT}.
+background, centered, fully visible, filling about 75% of the frame, 3/4 top-down view at
+30 degrees, on a plain pure white background, soft even studio lighting, shadowless.
 ```
 
-**青江菜**
+**麵碗**（只用來產生花紋與顏色的參考圖；模型改在 Blender 做，見流程文件 6.1。小湯碗把 `deep ceramic noodle bowl: wide round opening` 改成 `small ceramic soup bowl: small round opening`）
 ```text
-{2.3 風格參考段落}
-{STYLE}.
-A single baby bok choy cut in half lengthwise: thick pale green-white stem at the bottom fanning
-into a few broad rounded dark green leaves at the top, clear stem and leaf separation, flat cut
-side facing down.
-The baby bok choy is the only object in the image, isolated and floating alone on the white
-background, {SHOT}.
-```
-
-> 青江菜的葉子是寬大圓潤的形狀，和香菜（扇形分叉、波浪邊緣的小葉）明顯不同，符合企劃書的辨識度要求。
-
-**麵碗**
-```text
-{2.3 風格參考段落}
-{STYLE}.
+cute stylized 3D game asset, toy-like, soft clay look, chunky rounded shapes, slightly
+exaggerated proportions, simple clean silhouette, hand-painted colors, matte finish.
 A single empty deep ceramic noodle bowl: wide round opening, gently curved walls, thick rounded
-rim, smooth inner surface clearly visible, off-white glaze with a simple blue band pattern near
-the rim, flat stable base.
+rim, smooth inner surface clearly visible, muted off-white glaze with a simple blue band pattern
+near the rim, dull matte surface without shine, flat stable base.
 The empty noodle bowl is the only object in the image, clean and completely empty inside,
-isolated on the white background, {SHOT}.
+isolated on the white background, centered, fully visible, filling about 75% of the frame,
+3/4 top-down view at 30 degrees, on a plain pure white background, soft even studio lighting,
+shadowless.
 ```
+
+**香菜（全遊戲共用，D-20261023-07）**：視角改成 60° 俯視，讓葉形輪廓完整入鏡；Tripo 會照這個角度把葉子做成傾斜，清理時要轉平。3D 用 P1、face_limit 500，之後在 Blender 減到 600 三角面。
+
+完整葉（一根莖、三片小葉）：
+```text
+cute stylized 3D game asset, toy-like, soft clay look, chunky rounded shapes, slightly
+exaggerated proportions, simple clean silhouette, hand-painted colors, matte finish.
+A single sprig of fresh cilantro (coriander leaf) as a garnish on Taiwanese beef noodle soup:
+one thin slender pale green stem that splits at the top into three small fan-shaped leaflets,
+one larger leaflet at the tip and two smaller ones on short side stalks, each leaflet deeply
+divided into three rounded lobes with softly scalloped wavy edges, the leaflets thin like a real
+leaf but with a little thickness, lying almost flat with the leaflets gently cupped, the stem
+clearly visible and separate from the leaves, fresh medium green leaves slightly darker than
+the stem, dull matte surface without shine.
+The cilantro sprig is the only object in the image, isolated and floating alone on the white
+background, centered, fully visible, filling about 75% of the frame, 60 degree top-down view so
+the outline of every leaflet and the stem are clearly visible, on a plain pure white background,
+soft even studio lighting, shadowless.
+```
+
+小葉（第 2 版；第 1 版寫 `deeply divided into three rounded lobes`，結果畫成和完整葉一樣的三裂葉）：
+```text
+cute stylized 3D game asset, toy-like, soft clay look, chunky rounded shapes, slightly
+exaggerated proportions, simple clean silhouette, hand-painted colors, matte finish.
+A single tiny young cilantro (coriander) leaf as a garnish on Taiwanese beef noodle soup:
+one small round fan-shaped leaf, wider than it is tall, like a rounded kidney shape, the edge
+only shallowly notched into soft rounded scallops, not deeply divided, no separate leaflets,
+attached to a very short thin pale green stem, thin like a real leaf but with a little
+thickness, lying almost flat and gently cupped, fresh medium green leaf slightly darker than
+the stem, dull matte surface without shine.
+The cilantro leaf is the only object in the image, isolated and floating alone on the white
+background, centered, fully visible, filling about 75% of the frame, 60 degree top-down view so
+the round outline of the leaf and the short stem are clearly visible, on a plain pure white
+background, soft even studio lighting, shadowless.
+```
+
+碎葉（沒有莖）：
+```text
+cute stylized 3D game asset, toy-like, soft clay look, chunky rounded shapes, slightly
+exaggerated proportions, simple clean silhouette, hand-painted colors, matte finish.
+A single small torn fragment of a fresh cilantro (coriander) leaf, a scrap that fell into
+Taiwanese beef noodle soup: no stem at all, just one small piece of leaf blade, the top edge
+keeping two or three rounded lobes with softly scalloped wavy edges typical of cilantro, the
+bottom edge a jagged irregular torn line, thin like a real leaf but with a little thickness,
+lying almost flat and gently cupped, fresh medium green, dull matte surface without shine.
+The cilantro leaf fragment is the only object in the image, isolated and floating alone on the
+white background, centered, fully visible, filling about 75% of the frame, 60 degree top-down
+view so the rounded lobes and the torn edge are clearly visible, on a plain pure white
+background, soft even studio lighting, shadowless.
+```
+
+### 5.4 共用容器（Blender，2026-10-23 完成）
+
+所有容器用同一套奶白釉＋藍色回紋，原始檔都在 `art/source/shared/tableware.blend`（做法見流程文件 6.1）。
+
+| 物件 ID | 中文名 | 料理 | 尺寸（cm，直徑×高） | 做法 | 匯出 |
+|---|---|---|---|---|---|
+| bowl_noodle | 麵碗 | beef_noodle_soup | 18×8 | 旋轉成形；碗緣下藍帶＋回紋 20 組 | `art/models/beef_noodle_soup/bowl_noodle.glb` |
+| bowl_soup_small | 小湯碗（1-6） | beef_noodle_soup | 12×6 | 麵碗縮放，共用貼圖 | `art/models/beef_noodle_soup/bowl_soup_small.glb` |
+| bowl_rice | 飯碗 | braised_pork_rice | 13×7.5 | 麵碗縮放，共用貼圖 | `art/models/braised_pork_rice/bowl_rice.glb` |
+| plate_dumpling | 水餃盤 | dumplings | 24×2.5 | 旋轉成形；盤緣藍線＋回紋 40 組＋內圈細線 | `art/models/dumplings/plate_dumpling.glb` |
+| plate_dumpling_small | 水餃小盤（1-6） | dumplings | 16×2 | 水餃盤縮放，共用貼圖 | `art/models/dumplings/plate_dumpling_small.glb` |
+| dish_sauce | 沾醬碟 | dumplings | 8×2.5 | 旋轉成形；碟緣藍邊 | `art/models/dumplings/dish_sauce.glb` |
+
+物件 ID 中 `bowl_rice`、`plate_dumpling`、`plate_dumpling_small`、`dish_sauce` 是 3D 美術的提案，待企劃確認。
+
+**餐具（Blender，2026-10-23 完成）**：原始檔同樣在 `tableware.blend`，匯出到 `art/models/tools/`。原點在**夾取點**（筷子、鑷子的尖端中間；湯匙的勺底中心），方便程式把餐具對齊游標下的表面。夾合動畫是一個名為 `grip` 的動畫（第 1 格張開 → 第 6 格合起 → 第 12 格張開），兩支各自繞握把端旋轉。
+
+| 物件 ID | 中文名 | 尺寸（cm） | 材質 | 三角面 | 動畫 |
+|---|---|---|---|---:|---|
+| tool_chopsticks | 筷子（`chopstick_L`／`_R`） | 長 23 | 木色，握把端藍色 | 712 | `grip`（張開 4°） |
+| tool_tweezers | 鑷子（`tweezer_L`／`_R`＋`tweezer_joint`） | 長 12 | 霧面鋼色，握處藍色 | 372 | `grip`（張開 3°） |
+| tool_spoon | 湯匙（中式瓷湯匙） | 長 13.6 | 奶白釉，勺緣與柄尾藍色 | 1,228 | 無 |
+
+`tool_` 是新的前綴，待企劃確認。餐具不附碰撞形狀，夾取判定由程式決定（企劃書 7.4）。
 
 ### 5.3 生成 3D 的設定
 
@@ -220,8 +307,9 @@ isolated on the white background, {SHOT}.
 |---|---|---|---|---|---|
 | 牛肉塊 | 圖片生 3D | `P1-20260311` | 3000 | `v3.1-20260211` + `smart_low_poly: true` | `texture_size: 512`、`pivot_to_center_bottom: true` |
 | 麵條團 | 正面圖 → 圖片轉多視角 → 多視角生 3D | `P1-20260311` | 3000 | 同上 | `texture_size: 512`、`pivot_to_center_bottom: true` |
-| 青江菜 | 圖片生 3D | `P1-20260311` | 3000 | 同上 | `texture_size: 512`、`pivot_to_center_bottom: true`、`flatten_bottom: true` |
-| 麵碗 | 圖片生 3D | `P1-20260311` | 5000 | 同上，或 Blender 旋轉成形 | `texture_size: 1024`、`pivot_to_center_bottom: true`、`flatten_bottom: true` |
+| 青江菜葉 | 圖片生 3D | `P1-20260311` | 3000 | 同上 | `texture_size: 512`、`pivot_to_center_bottom: true`、`flatten_bottom: true` |
+
+> 單張圖片生成 3D 時，背面的形狀會被推測出來，但貼圖顏色只能靠猜（例如牛肉塊 B 底部有筋的溝、沒有筋的顏色）。底部的小問題可以接受或在 Blender 修；背面是重點的物件改用多視角。
 
 預估點數見流程文件 10.3。
 
@@ -239,28 +327,24 @@ isolated on the white background, {SHOT}.
 - 料理名稱：{料理名稱}
 - 料理描述：{料理描述，例如「台灣的肉圓，Q 彈外皮，淋上紅色甜辣醬，盛在小碟中」}
 - 在關卡中的用途：{例如「第二章新料理；要有 2 個以上可以翻面檢查的食物」}
-- 既有的風格基準圖：{有／沒有。有的話寫出是哪一道料理的哪個物件}
+- 既有的風格基準圖：{有／沒有。有的話寫出是哪一道料理的哪個物件，並描述它的表面質感與顏色}
 
 請依照以下規則：
 1. 把料理拆成「可以各自拿起的物件」。每個物件一次生成、一個 .glb。容器是空的、固定不動。
    液體（湯、醬汁）不建模，寫成 shader 需求。
-2. 又薄又小的葉片（香菜、蔥花、碎葉、海苔）標為「Blender 手工」，不用 Tripo。
+2. 又薄又小的葉片（蔥花、碎葉、海苔）標為「Blender 手工」，不用 Tripo；香菜例外，用共用的 Tripo 模型（D-20261023-07）。
 3. 每個物件寫出真實尺寸（cm）、密度（g/cm³，水 = 1.0）、是否平底、碰撞形狀（凸包數量，或容器用凹面）、
    香菜可以附著的面（Top／Side／Back／Bottom）。
 4. 列出可以重用的既有資產：麵碗、湯碗、盤子、醬碟、青菜、共用香菜。
 5. 所有物件都走「先產生參考圖，再用圖片生成 3D」。不要提供文字直接生 3D 的 prompt。
 6. 指定一個「風格基準物件」：沒有既有基準圖時，選造型最單純的物件；有的話沿用既有基準圖。
-   基準物件之外的每個物件，都要註明「上傳風格基準圖當參考」，並在 prompt 最前面加上：
-   "Match the art style of the reference image exactly: same materials, same color saturation,
-   same lighting, same level of detail and the same degree of roundness. Do not copy its shape;
-   create a different object as described below."
+   Tripo 網頁版不能上傳參考圖，所以每個物件的 prompt 都要用文字寫出和基準圖同等級的表面質感
+   （微微不平、少量柔和細節；不要用 lumpy、knobbly、many bumps），顏色偏深偏沉（deep, muted）。
 7. 每個 Tripo 物件寫出完整的英文參考圖 prompt，格式為：STYLE. 物件描述. ISOLATE, SHOT.
-   物件描述包含物件名、造型重點 2–3 個、顏色與明度、底部形狀。
+   物件描述包含物件名、造型重點 2–3 個、表面質感、顏色與明度、"dull matte surface without shine"、底部形狀。
    STYLE、SHOT 一字不改地使用以下內容：
-   STYLE = "cute stylized 3D game asset, toy-like, soft clay and matte vinyl look, chunky rounded
-   shapes, softened edges, slightly exaggerated proportions, simple clean silhouette,
-   hand-painted soft colors, gentle color gradients, minimal surface detail, smooth clean
-   surfaces, matte finish with soft subtle highlight"
+   STYLE = "cute stylized 3D game asset, toy-like, soft clay look, chunky rounded shapes, slightly
+   exaggerated proportions, simple clean silhouette, hand-painted colors, matte finish"
    SHOT = "centered, fully visible, filling about 75% of the frame, 3/4 top-down view at 30 degrees,
    on a plain pure white background, soft even studio lighting, shadowless"
    ISOLATE（食物）= "the {物件英文名} is the only object in the image, isolated and floating alone
@@ -302,10 +386,10 @@ isolated on the white background, {SHOT}.
 | 問題 | 調整方式 |
 |---|---|
 | 圖中出現盤子、桌子、筷子 | 確認 prompt 裡沒有列出這些詞（包括負面描述）；加強 `ISOLATE` 描述 |
-| 太寫實、太油亮 | 加重 `matte, clay, toy` 的描述；改用風格基準圖當參考 |
+| 太寫實、太油亮 | 加重 `matte, clay, toy` 的描述；加 `dull matte surface without shine` |
 | 細節糊成一團（例如麵條） | 在描述中**主動簡化**：`simplified into a few thick strands`，不要要求細節 |
 | 底部不平、放不穩 | 描述加 `flat stable bottom`；轉檔時開 `flatten_bottom` |
-| 同一道料理風格不一致 | 確認每個物件都上傳了風格基準圖，並加了 2.3 的風格參考段落；所有物件用同一個圖像模型 |
+| 同一道料理風格不一致 | 照 2.3 用文字補上表面質感、深色、霧面；所有物件用同一個圖像模型（GPT Image 2）；3 批還不行就改用能上傳參考圖的工具 |
 | 綠色食材和香菜太像 | 改輪廓（寬葉、圓葉、管狀），並拉開明度差；不要只改顏色 |
 | 參考圖好看，但 3D 結果差 | 參考圖的視角改成更正面、物件更完整；背面複雜就改用多視角 |
 | H3.1 的 smart_low_poly 失敗 | 失敗不扣點；改用 P1，或關掉 smart_low_poly 生成後用 Retopology 減面 |
