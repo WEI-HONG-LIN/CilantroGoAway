@@ -56,3 +56,11 @@
 - 理由：文字生 3D 會在內部自動產生一張看不到、也不能挑的圖，風格無法控制；2D 參考圖便宜，可以先在 2D 階段試錯並確定風格。
 - 影響角色：04 3D 美術、02 遊戲企劃（確認風格基準圖）
 - 已更新：`docs/pipeline/tripo3d_料理建模流程.md`、`docs/pipeline/tripo3d_prompt範本.md`
+
+## D-20261023-02 GitHub 目前只放開發文件
+- 問題：哪些檔案要上傳 GitHub
+- 決定：目前只上傳開發文件（`CLAUDE.md`、企劃書、`docs/`、`.claude/agents/`）。Godot 專案、程式、美術（含 Blender 原始檔）、音效都只留在使用者電腦上；`.gitignore` 改用白名單；暫不使用 Git LFS。資產紀錄與音效授權改記在 `docs/assets/`。
+- 理由：使用者決定。
+- 代價：雲端 session 看不到程式與資產，實作工作要在使用者電腦上的 session 進行；程式與資產沒有雲端備份與版本紀錄，需要自行備份。之後若改為上傳，要加回 LFS 規則並修改 `.gitignore`。
+- 影響角色：全部
+- 已更新：`.gitignore`、`.gitattributes`、`CLAUDE.md`、企劃書 5.1、`docs/pipeline/tripo3d_料理建模流程.md`、`docs/roles/04_3D美術.md`、`docs/roles/07_音效設計.md`、`.claude/agents/artist-3d.md`、`.claude/agents/sound-designer.md`

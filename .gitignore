@@ -1,26 +1,17 @@
-# Godot 4
-.godot/
-*.translation
-/android/
+# 目前只上傳開發文件（決策 D-20261023-02）。
+# 採白名單：先排除全部，再列出要上傳的檔案與資料夾。
+# Godot 專案、程式、美術（含 Blender 原始檔）、音效都只留在本機。
+/*
+!/.gitignore
+!/.gitattributes
+!/CLAUDE.md
+!/香菜退散_Godot遊戲企劃書.md
+!/docs/
+!/.claude/
 
-# 匯出的遊戲
-/build/
-/export/
-
-# 美術：只留在本機的檔案
-# Tripo 原始下載、試做的參考圖、草稿都放在 art/_local/，不上傳
-art/_local/
-# Blender 自動備份
-*.blend1
-*.blend2
-
-# Claude Code
-.claude/settings.local.json
-.claude/worktrees/
-
-# 機密資料
-.env
-.env.*
+# .claude/ 裡只上傳角色定義
+/.claude/*
+!/.claude/agents/
 
 # 作業系統
 .DS_Store

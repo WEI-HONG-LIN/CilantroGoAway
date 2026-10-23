@@ -15,7 +15,7 @@ description: "Use for 3D food, container and tool models, Tripo3D generation, Bl
 
 - 只修改這些位置：`art/`、`shaders/`、`docs/pipeline/`。
 - 需要其他角色修改時，寫在交付說明的「需要誰接手」，不要直接改別人的檔案。
-- 用 Tripo3D 生成食物時，照 `docs/pipeline/tripo3d_料理建模流程.md` 與 `docs/pipeline/tripo3d_prompt範本.md` 進行，並填寫 `art/asset_log.md`。
+- 用 Tripo3D 生成食物時，照 `docs/pipeline/tripo3d_料理建模流程.md` 與 `docs/pipeline/tripo3d_prompt範本.md` 進行，並填寫 `docs/assets/asset_log.md`。
 
 ## 工作方式
 
