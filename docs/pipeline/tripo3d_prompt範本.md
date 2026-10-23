@@ -4,6 +4,18 @@
 
 圖像生成工具與 Tripo 對英文 prompt 的理解通常比較好，所以 prompt 本體用英文，說明用中文。`{大括號}` 是要替換的欄位。
 
+> **標準做法是「先產生參考圖，再用圖片生成 3D」**（流程文件第 0 節原則 4）。本文件的主要 prompt 都是**產生參考圖用**；文字直接生 3D 的 prompt 只保留在第 4 節做比較用，不用於正式資產。
+
+## 0. 先看你用哪個管道
+
+| 管道 | 負面描述（Negative）欄位 | prompt 長度 | 用哪些區塊 |
+|---|---|---|---|
+| **Tripo 網頁版 Image 分頁**（主要） | **沒有**（2026-10-23 依介面截圖確認） | 介面顯示上限 10,000 字元 | `STYLE` + 物件描述 + `SHOT` + `ISOLATE` |
+| Tripo API（`/v3/generation/text-to-image`） | 依圖像模型而定 | 依圖像模型而定 | 同上；`NEGATIVE` 只在有欄位時另外填 |
+| 其他圖像生成工具 | 依工具而定 | 依工具而定 | 同上；有負面欄位才填 `NEGATIVE` |
+
+**沒有負面欄位時，不要把負面描述接在 prompt 後面。** 圖像模型看到 `plate, bowl, table, chopsticks` 這些詞，反而可能把它們畫出來。要排除的東西，一律改寫成正面描述（`ISOLATE` 區塊）。
+
 ---
 
 ## 1. 共用區塊（每個 prompt 都要用，不要改）
@@ -13,21 +25,34 @@
 ```text
 cute stylized 3D game asset, toy-like, soft clay and matte vinyl look, chunky rounded shapes,
 softened edges, slightly exaggerated proportions, simple clean silhouette, hand-painted soft
-colors, gentle color gradients, minimal surface detail, no realistic pores or noise, matte finish
+colors, gentle color gradients, minimal surface detail, smooth clean surfaces, matte finish
 with soft subtle highlight
 ```
 
-> 意思：可愛 Q 版、玩具感、黏土或霧面軟膠質感、圓潤厚實、邊角柔和、比例略誇張、輪廓簡潔、手繪柔和配色、少量細節、霧面。對應企劃書 4.1。
+> 意思：可愛 Q 版、玩具感、黏土或霧面軟膠質感、圓潤厚實、邊角柔和、比例略誇張、輪廓簡潔、手繪柔和配色、少量細節、表面乾淨、霧面。對應企劃書 4.1。
 
-### 1.2 構圖與光線 `SHOT`（只用在參考圖）
+### 1.2 構圖與光線 `SHOT`
 
 ```text
-single object only, centered, full object visible, occupies 75% of the frame,
-3/4 top-down view at 30 degrees, plain pure white background, soft even studio lighting,
-no cast shadow, no reflections, no props
+centered, fully visible, filling about 75% of the frame, 3/4 top-down view at 30 degrees,
+on a plain pure white background, soft even studio lighting, shadowless
 ```
 
-### 1.3 負面描述 `NEGATIVE`
+### 1.3 隔離描述 `ISOLATE`（用正面描述排除其他東西）
+
+**食物用：**
+```text
+the {物件英文名} is the only object in the image, isolated and floating alone on the white
+background
+```
+
+**容器用：**
+```text
+the empty {容器英文名} is the only object in the image, clean and completely empty inside,
+isolated on the white background
+```
+
+### 1.4 負面描述 `NEGATIVE`（只在有負面欄位時使用）
 
 ```text
 photorealistic, photo scan, greasy, glossy oil, wet shine, noisy texture, dirt, burnt,
@@ -35,72 +60,85 @@ multiple objects, plate, bowl, table, chopsticks, hands, background, steam, text
 watermark, cropped, blurry, low quality
 ```
 
-> 生成**容器**時，要從 `NEGATIVE` 拿掉 `plate, bowl`，改加 `food, soup, liquid`；生成**食物**時保留，避免連盤子一起生成。
->
-> **長度限制（官方）：** Tripo 的 `prompt` 最多 1024 字元、`negative_prompt` 最多 255 字元。上面的 NEGATIVE 約 200 字元，自己加詞時不要超過 255。
+> 生成容器時拿掉 `plate, bowl`，改加 `food, soup, liquid`。Tripo API 的 `negative_prompt` 上限 255 字元；上面約 200 字元。
 
 ---
 
-## 2. 參考圖 prompt（步驟 ②，用 Tripo 文生圖或其他圖像生成工具）
-
-用 Tripo 的 `POST /v3/generation/text-to-image` 時，`Negative:` 之前的內容放進 `prompt`，`Negative:` 之後的內容放進負面描述欄位（如果該模型支援），不支援就省略。
+## 2. 參考圖 prompt（步驟 ②）
 
 ### 2.1 食物範本
 
 ```text
-{STYLE}, a single {物件英文名} ({物件說明}), {造型重點}, {顏色重點},
-{底部描述}, {SHOT}
-Negative: {NEGATIVE}
+{STYLE}.
+A single {物件英文名} ({物件說明}): {造型重點}, {顏色重點}, {底部描述}.
+{ISOLATE（食物用）}, {SHOT}.
 ```
 
 | 欄位 | 寫法 | 例子 |
 |---|---|---|
 | 物件英文名 | 具體的名詞 | `braised beef chunk` |
 | 物件說明 | 一句話描述它在料理中的樣子 | `from Taiwanese beef noodle soup` |
-| 造型重點 | 2–3 個能被認出來的特徵 | `irregular cube shape, visible soft tendon layer, slightly fibrous edges` |
-| 顏色重點 | 主色 + 輔色，寫出明度 | `warm reddish brown with lighter tendon stripes` |
+| 造型重點 | 2–3 個能被認出來的特徵 | `irregular rounded cube shape, a soft tendon layer on one side` |
+| 顏色重點 | 主色 + 輔色，寫出明度 | `warm reddish brown with a lighter beige tendon stripe` |
 | 底部描述 | 平底或圓底（影響物理） | `flat stable bottom` 或 `rounded bottom` |
 
 ### 2.2 容器範本
 
 ```text
-{STYLE}, a single empty {容器英文名}, {造型重點}, thick rounded rim, smooth inner surface clearly
-visible, {顏色與花紋}, flat stable base, nothing inside, {SHOT}
-Negative: {NEGATIVE 拿掉 plate, bowl}, food, soup, liquid, noodles
+{STYLE}.
+A single empty {容器英文名}: {造型重點}, thick rounded rim, smooth inner surface clearly visible,
+{顏色與花紋}, flat stable base.
+{ISOLATE（容器用）}, {SHOT}.
 ```
 
-### 2.3 多視角（步驟 ② 的 3.3，背面複雜時）
+### 2.3 用風格基準圖產生其他物件（流程文件 3.2）
 
-**建議做法：** 用 2.1 做出正面圖後，直接呼叫 Tripo 的 `POST /v3/generation/image-to-multiview`（10 點）自動產生四個視角，不需要另外寫 prompt；某個視角不對時，用 Edit Multiview（每張 5 點）修正。
-
-如果用其他圖像工具，以正面圖為參考，用下面的 prompt 生成其他視角：
+每道料理的第一個物件做好之後，就是**風格基準圖**。之後的物件都要**上傳風格基準圖當參考**，並在 prompt 最前面加上這段：
 
 ```text
-same object as the reference image, identical style, size, colors and lighting,
-{view} view, orthographic camera, plain pure white background, no shadow
+Match the art style of the reference image exactly: same materials, same color saturation,
+same lighting, same level of detail and the same degree of roundness. Do not copy its shape;
+create a different object as described below.
 ```
 
-`{view}` 依序填 `left side`、`back`、`right side`。四張圖的物件大小要一致；不一致就重新生成，不要硬塞給 Tripo。多視角生 3D 至少要 2 張（正面必填）。
+後面接 2.1 或 2.2 的完整 prompt。
+
+> Tripo 網頁版 Image 分頁的輸入框左下角有圖片按鈕，應該就是上傳參考圖的地方；實際行為還沒確認，見流程文件第 12 節。
+
+### 2.4 多視角（背面形狀複雜時）
+
+**建議做法：** 正面圖挑好之後，用 Tripo 的「圖片轉多視角」（API：`POST /v3/generation/image-to-multiview`，10 點）自動產生四個視角，不需要另外寫 prompt；某個視角不對時，用 Edit Multiview（每張 5 點）修正。
+
+如果用其他圖像工具，以正面圖為參考，用這段 prompt 生成其他視角：
+
+```text
+the same object as the reference image, identical style, size, colors and lighting,
+{view} view, orthographic camera, on a plain pure white background, shadowless
+```
+
+`{view}` 依序填 `left side`、`back`、`right side`。四張圖的物件大小要一致；不一致就重新生成。多視角生 3D 至少要 2 張（正面必填）。
 
 ---
 
-## 3. Tripo 文生 3D prompt（步驟 ③，只用來快速試造型）
+## 3. Tripo 重新上貼圖 prompt（貼圖重生成的文字提示）
 
 ```text
-{STYLE}, a single {物件英文名}, {造型重點}, {顏色重點}, {底部描述},
-game-ready low poly prop, closed watertight mesh, solid object
-```
-
-`negative_prompt` 欄位填 `NEGATIVE`。
-
-## 4. Tripo 重新上貼圖 prompt（`POST /v3/models/texture` 的文字提示）
-
-```text
-{STYLE}, {物件英文名}, {顏色重點}, flat hand-painted albedo colors, no baked shadows,
-no baked highlights, no ambient occlusion darkening, even lighting
+{STYLE}, {物件英文名}, {顏色重點}, flat hand-painted albedo colors, even lighting,
+evenly lit surface without baked shadows or highlights
 ```
 
 > 用途：模型造型滿意，但貼圖有烘進去的陰影、太寫實或太油時使用。先試試把貼圖模型設為 `v3.5-20260815` 並開啟 `delight`（去除參考圖的光影），通常就能解決陰影問題。
+
+## 4. 文字直接生 3D（僅供比較，不用於正式資產）
+
+想比較「文字生 3D」和「圖片生 3D」的差異時才用。正式資產一律走圖片路線，因為文字生 3D 會在內部自動產生一張你看不到的圖，每次的風格都不一樣。
+
+```text
+{STYLE}, a single {物件英文名}, {造型重點}, {顏色重點}, {底部描述},
+isolated single object, game-ready low poly prop, closed watertight mesh, solid object
+```
+
+有負面欄位才填 `NEGATIVE`。
 
 ---
 
@@ -119,64 +157,73 @@ no baked highlights, no ambient occlusion darkening, even lighting
 
 湯：牛肉湯預設，混濁度 0.6，液面高度在碗高的 70%。
 
-### 5.2 參考圖 prompt
+**風格基準物件：牛肉塊 A。** 它的造型最單純、最容易做好，做好之後其他物件都以它的圖為參考。
 
-**牛肉塊 A**
+### 5.2 參考圖 prompt（可以直接貼進 Tripo 網頁版 Image 分頁）
+
+**牛肉塊 A（風格基準物件，不需要上傳參考圖）**
 ```text
 cute stylized 3D game asset, toy-like, soft clay and matte vinyl look, chunky rounded shapes,
 softened edges, slightly exaggerated proportions, simple clean silhouette, hand-painted soft
-colors, gentle color gradients, minimal surface detail, no realistic pores or noise, matte finish
-with soft subtle highlight, a single braised beef chunk (from Taiwanese beef noodle soup),
-irregular rounded cube shape, a soft translucent tendon layer on one side, slightly fibrous edges,
-warm reddish brown with lighter beige tendon stripe, flat stable bottom, single object only,
-centered, full object visible, occupies 75% of the frame, 3/4 top-down view at 30 degrees,
-plain pure white background, soft even studio lighting, no cast shadow, no reflections, no props
-Negative: photorealistic, photo scan, greasy, glossy oil, wet shine, noisy texture, dirt, burnt,
-multiple objects, plate, bowl, table, chopsticks, hands, background, steam, text, logo,
-watermark, cropped, blurry, low quality
+colors, gentle color gradients, minimal surface detail, smooth clean surfaces, matte finish
+with soft subtle highlight.
+A single braised beef chunk (from Taiwanese beef noodle soup): irregular rounded cube shape,
+a soft translucent tendon layer on one side, slightly fibrous edges, warm reddish brown with a
+lighter beige tendon stripe, flat stable bottom.
+The braised beef chunk is the only object in the image, isolated and floating alone on the
+white background, centered, fully visible, filling about 75% of the frame, 3/4 top-down view
+at 30 degrees, on a plain pure white background, soft even studio lighting, shadowless.
 ```
 
-**麵條團**（先做正面，再用 2.3 做其他三個視角）
+以下物件都要**上傳牛肉塊 A 的圖當參考**，並在最前面加上 2.3 的風格參考段落。
+
+**麵條團**（正面圖挑好後，再做多視角）
 ```text
-{STYLE}, a single clump of thick wheat noodles (from Taiwanese beef noodle soup), loosely
-coiled into a soft oval nest, noodles simplified into a few thick smooth rounded strands
-that merge together, creamy pale yellow with slightly darker strand gaps, flat bottom,
-{SHOT}
-Negative: {NEGATIVE}
+{2.3 風格參考段落}
+{STYLE}.
+A single clump of thick wheat noodles (from Taiwanese beef noodle soup): loosely coiled into a
+soft oval nest, noodles simplified into a few thick smooth rounded strands that merge together,
+creamy pale yellow with slightly darker strand gaps, flat bottom.
+The clump of noodles is the only object in the image, isolated and floating alone on the white
+background, {SHOT}.
 ```
 
 **青江菜**
 ```text
-{STYLE}, a single baby bok choy cut in half lengthwise, thick pale green-white stem at the
-bottom fanning into a few broad rounded dark green leaves at the top, clear stem and leaf
-separation, flat cut side facing down, {SHOT}
-Negative: {NEGATIVE}
+{2.3 風格參考段落}
+{STYLE}.
+A single baby bok choy cut in half lengthwise: thick pale green-white stem at the bottom fanning
+into a few broad rounded dark green leaves at the top, clear stem and leaf separation, flat cut
+side facing down.
+The baby bok choy is the only object in the image, isolated and floating alone on the white
+background, {SHOT}.
 ```
 
 > 青江菜的葉子是寬大圓潤的形狀，和香菜（扇形分叉、波浪邊緣的小葉）明顯不同，符合企劃書的辨識度要求。
 
 **麵碗**
 ```text
-{STYLE}, a single empty deep ceramic noodle bowl, wide round opening, gently curved walls,
-thick rounded rim, smooth inner surface clearly visible, off-white glaze with a simple
-blue band pattern near the rim, flat stable base, nothing inside, {SHOT}
-Negative: photorealistic, photo scan, greasy, glossy oil, noisy texture, dirt, multiple objects,
-table, chopsticks, hands, background, food, soup, liquid, noodles, text, logo, watermark,
-cropped, blurry, low quality
+{2.3 風格參考段落}
+{STYLE}.
+A single empty deep ceramic noodle bowl: wide round opening, gently curved walls, thick rounded
+rim, smooth inner surface clearly visible, off-white glaze with a simple blue band pattern near
+the rim, flat stable base.
+The empty noodle bowl is the only object in the image, clean and completely empty inside,
+isolated on the white background, {SHOT}.
 ```
 
-### 5.3 Tripo 設定
+### 5.3 生成 3D 的設定
 
-共同參數：`texture: true`、`pbr: false`、`texture_quality: "standard"`、`texture_version: "v3.5-20260815"`、`delight: true`；不設定 `export_orientation`。
+共同參數：`texture: true`、`pbr: false`、`texture_quality: "standard"`、`texture_version: "v3.5-20260815"`、`delight: true`；不設定 `export_orientation`。網頁版上對應的選項名稱見流程文件第 12 節。
 
-| 物件 | 端點 | `model` | `face_limit` | 備案 | Convert（`format: "GLTF"`） |
+| 物件 | 方式 | `model` | `face_limit` | 備案 | Convert（`format: "GLTF"`） |
 |---|---|---|---|---|---|
-| 牛肉塊 | image-to-model | `P1-20260311` | 3000 | `v3.1-20260211` + `smart_low_poly: true` | `texture_size: 512`、`pivot_to_center_bottom: true` |
-| 麵條團 | 正面圖 → image-to-multiview → multiview-to-model | `P1-20260311` | 3000 | 同上 | `texture_size: 512`、`pivot_to_center_bottom: true` |
-| 青江菜 | image-to-model | `P1-20260311` | 3000 | 同上 | `texture_size: 512`、`pivot_to_center_bottom: true`、`flatten_bottom: true` |
-| 麵碗 | image-to-model | `P1-20260311` | 5000 | 同上，或 Blender 旋轉成形 | `texture_size: 1024`、`pivot_to_center_bottom: true`、`flatten_bottom: true` |
+| 牛肉塊 | 圖片生 3D | `P1-20260311` | 3000 | `v3.1-20260211` + `smart_low_poly: true` | `texture_size: 512`、`pivot_to_center_bottom: true` |
+| 麵條團 | 正面圖 → 圖片轉多視角 → 多視角生 3D | `P1-20260311` | 3000 | 同上 | `texture_size: 512`、`pivot_to_center_bottom: true` |
+| 青江菜 | 圖片生 3D | `P1-20260311` | 3000 | 同上 | `texture_size: 512`、`pivot_to_center_bottom: true`、`flatten_bottom: true` |
+| 麵碗 | 圖片生 3D | `P1-20260311` | 5000 | 同上，或 Blender 旋轉成形 | `texture_size: 1024`、`pivot_to_center_bottom: true`、`flatten_bottom: true` |
 
-預估點數約 1,080 點（≈ 11 美元），計算方式見流程文件 10.3。
+預估點數見流程文件 10.3。
 
 ---
 
@@ -192,6 +239,7 @@ cropped, blurry, low quality
 - 料理名稱：{料理名稱}
 - 料理描述：{料理描述，例如「台灣的肉圓，Q 彈外皮，淋上紅色甜辣醬，盛在小碟中」}
 - 在關卡中的用途：{例如「第二章新料理；要有 2 個以上可以翻面檢查的食物」}
+- 既有的風格基準圖：{有／沒有。有的話寫出是哪一道料理的哪個物件}
 
 請依照以下規則：
 1. 把料理拆成「可以各自拿起的物件」。每個物件一次生成、一個 .glb。容器是空的、固定不動。
@@ -200,38 +248,46 @@ cropped, blurry, low quality
 3. 每個物件寫出真實尺寸（cm）、密度（g/cm³，水 = 1.0）、是否平底、碰撞形狀（凸包數量，或容器用凹面）、
    香菜可以附著的面（Top／Side／Back／Bottom）。
 4. 列出可以重用的既有資產：麵碗、湯碗、盤子、醬碟、青菜、共用香菜。
-5. 每個要用 Tripo 的物件，寫出完整的英文參考圖 prompt，格式為：
-   STYLE + 物件描述（物件名、造型重點 2–3 個、顏色與明度、底部形狀）+ SHOT，並附上 Negative。
-   STYLE、SHOT、NEGATIVE 一字不改地使用以下內容：
+5. 所有物件都走「先產生參考圖，再用圖片生成 3D」。不要提供文字直接生 3D 的 prompt。
+6. 指定一個「風格基準物件」：沒有既有基準圖時，選造型最單純的物件；有的話沿用既有基準圖。
+   基準物件之外的每個物件，都要註明「上傳風格基準圖當參考」，並在 prompt 最前面加上：
+   "Match the art style of the reference image exactly: same materials, same color saturation,
+   same lighting, same level of detail and the same degree of roundness. Do not copy its shape;
+   create a different object as described below."
+7. 每個 Tripo 物件寫出完整的英文參考圖 prompt，格式為：STYLE. 物件描述. ISOLATE, SHOT.
+   物件描述包含物件名、造型重點 2–3 個、顏色與明度、底部形狀。
+   STYLE、SHOT 一字不改地使用以下內容：
    STYLE = "cute stylized 3D game asset, toy-like, soft clay and matte vinyl look, chunky rounded
    shapes, softened edges, slightly exaggerated proportions, simple clean silhouette,
-   hand-painted soft colors, gentle color gradients, minimal surface detail, no realistic pores
-   or noise, matte finish with soft subtle highlight"
-   SHOT = "single object only, centered, full object visible, occupies 75% of the frame,
-   3/4 top-down view at 30 degrees, plain pure white background, soft even studio lighting,
-   no cast shadow, no reflections, no props"
-   NEGATIVE = "photorealistic, photo scan, greasy, glossy oil, wet shine, noisy texture, dirt,
-   burnt, multiple objects, plate, bowl, table, chopsticks, hands, background, steam, text,
-   logo, watermark, cropped, blurry, low quality"
-   （容器的 NEGATIVE 拿掉 plate, bowl，加上 food, soup, liquid。）
-   限制：prompt ≤ 1024 字元、Negative ≤ 255 字元。
-6. 檢查辨識度：任何綠色的物件都要說明它和香菜（扇形分叉、波浪葉緣、細葉柄的小葉）在輪廓上有什麼不同。
-7. 背面形狀複雜的物件標註「需要多視角」（流程：正面圖 → image-to-multiview → multiview-to-model）。
-8. 每個 Tripo 物件列出建議設定：端點、model（首選 P1-20260311；備案 v3.1-20260211 + smart_low_poly）、
+   hand-painted soft colors, gentle color gradients, minimal surface detail, smooth clean
+   surfaces, matte finish with soft subtle highlight"
+   SHOT = "centered, fully visible, filling about 75% of the frame, 3/4 top-down view at 30 degrees,
+   on a plain pure white background, soft even studio lighting, shadowless"
+   ISOLATE（食物）= "the {物件英文名} is the only object in the image, isolated and floating alone
+   on the white background"
+   ISOLATE（容器）= "the empty {容器英文名} is the only object in the image, clean and completely
+   empty inside, isolated on the white background"
+   Tripo 網頁版沒有負面描述欄位，所以**不要**輸出 Negative 段落，也不要在 prompt 中列出不要的東西
+   （例如 plate, table, chopsticks）；要排除的東西一律用正面描述表達。
+8. 檢查辨識度：任何綠色的物件都要說明它和香菜（扇形分叉、波浪葉緣、細葉柄的小葉）在輪廓上有什麼不同。
+9. 背面形狀複雜的物件標註「需要多視角」（正面圖 → 圖片轉多視角 → 多視角生 3D）。
+10. 每個物件列出生成 3D 的設定：model（首選 P1-20260311；備案 v3.1-20260211 + smart_low_poly）、
    face_limit（食物 3000、容器 5000）、Convert 參數（GLTF、texture_size 512 或 1024、
    pivot_to_center_bottom、flatten_bottom 是否開啟）。共同參數固定為 texture true、pbr false、
    texture_quality standard、texture_version v3.5-20260815、delight true，不設定 export_orientation。
-9. 依官方定價估算點數（1 點 = 0.01 美元）：參考圖 5、P1 圖生 3D 50、H3.1 圖生 3D 30 + 智慧低面數 10、
-   圖片轉多視角 10、格式轉換 10、重新上貼圖 10；每個物件以 3 次候選計算。
+11. 依官方 API 定價估算點數（1 點 = 0.01 美元）：每批參考圖 4 張、P1 圖生 3D 50、H3.1 圖生 3D 30 +
+   智慧低面數 10、圖片轉多視角 10、格式轉換 10、重新上貼圖 10；每個物件以 3 次 3D 候選計算。
+   網頁版的點數另計，以介面顯示為準。
 
 輸出格式：
 ## 料理拆件表：{料理名稱}
 （表格，欄位：# / 物件 ID / 中文名 / 類型 / 數量 / 尺寸 cm / 生成方式 / 碰撞 / 密度 / 進湯 / 掛點面）
+## 風格基準物件
 ## 液體與 shader 需求
 ## 重用資產
 ## 辨識度檢查
-## 參考圖 prompt（每個物件一段）
-## Tripo 設定表
+## 參考圖 prompt（每個物件一段，依製作順序排列，基準物件放第一個）
+## 生成 3D 設定表
 ## 點數預估
 ## 風險與注意事項（例如可能生成失敗的造型、需要手工修正的地方）
 
@@ -243,13 +299,14 @@ cropped, blurry, low quality
 
 ## 7. 常見問題與調整方式
 
-| 問題 | 調整 prompt 的方式 |
+| 問題 | 調整方式 |
 |---|---|
-| 生成出連盤子、連桌子 | 在物件描述加 `isolated, floating object, no container`；確認參考圖背景是純白 |
-| 太寫實、太油亮 | 加重 `matte, clay, toy` 的描述；貼圖用第 4 節重新上 |
+| 圖中出現盤子、桌子、筷子 | 確認 prompt 裡沒有列出這些詞（包括負面描述）；加強 `ISOLATE` 描述 |
+| 太寫實、太油亮 | 加重 `matte, clay, toy` 的描述；改用風格基準圖當參考 |
 | 細節糊成一團（例如麵條） | 在描述中**主動簡化**：`simplified into a few thick strands`，不要要求細節 |
-| 底部不平、放不穩 | 描述加 `flat stable bottom`；`convert_model` 開 `flatten_bottom` |
-| 同一道料理風格不一致 | 所有物件用同一個圖像工具、同一組 STYLE；先做一件「風格基準物件」，其他物件用它當風格參考 |
+| 底部不平、放不穩 | 描述加 `flat stable bottom`；轉檔時開 `flatten_bottom` |
+| 同一道料理風格不一致 | 確認每個物件都上傳了風格基準圖，並加了 2.3 的風格參考段落；所有物件用同一個圖像模型 |
 | 綠色食材和香菜太像 | 改輪廓（寬葉、圓葉、管狀），並拉開明度差；不要只改顏色 |
-| H3.1 的 smart_low_poly 失敗 | 失敗不扣點；改用 P1，或關掉 smart_low_poly 生成後用 Retopology（`/v3/mesh/decimate`）減面 |
-| 貼圖有烘進去的陰影 | `texture_version: "v3.5-20260815"` 加 `delight: true`；還是不行再用第 4 節重新上貼圖 |
+| 參考圖好看，但 3D 結果差 | 參考圖的視角改成更正面、物件更完整；背面複雜就改用多視角 |
+| H3.1 的 smart_low_poly 失敗 | 失敗不扣點；改用 P1，或關掉 smart_low_poly 生成後用 Retopology 減面 |
+| 貼圖有烘進去的陰影 | 參考圖改成 `shadowless`；`texture_version: "v3.5-20260815"` 加 `delight: true`；還是不行再用第 3 節重新上貼圖 |
