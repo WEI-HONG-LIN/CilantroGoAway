@@ -96,3 +96,12 @@
 - 三角面數／貼圖：2,048／2048×512；碰撞 `dish_sauce-colonly`（本體減面 50%）
 - 匯出：art/models/dumplings/dish_sauce.glb
 - 授權：自製，無第三方授權問題
+
+### tool_chopsticks／tool_tweezers／tool_spoon
+- 用途：餐具（企劃書 4.2、7.4）
+- 管道：Blender 手工（Claude 透過 Blender MCP 以 Python 建立，2026-10-23）
+- 原始檔：art/source/shared/tableware.blend
+- 匯出：art/models/tools/tool_chopsticks.glb、tool_tweezers.glb、tool_spoon.glb
+- 三角面數：712／372／1,228；材質各 2 個（主色＋藍色）
+- 動畫：筷子、鑷子各有 `grip`（12 格）
+- 授權：自製，無第三方授權問題

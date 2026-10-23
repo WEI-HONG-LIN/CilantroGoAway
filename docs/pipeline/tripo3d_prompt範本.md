@@ -239,6 +239,16 @@ shadowless.
 
 物件 ID 中 `bowl_rice`、`plate_dumpling`、`plate_dumpling_small`、`dish_sauce` 是 3D 美術的提案，待企劃確認。
 
+**餐具（Blender，2026-10-23 完成）**：原始檔同樣在 `tableware.blend`，匯出到 `art/models/tools/`。原點在**夾取點**（筷子、鑷子的尖端中間；湯匙的勺底中心），方便程式把餐具對齊游標下的表面。夾合動畫是一個名為 `grip` 的動畫（第 1 格張開 → 第 6 格合起 → 第 12 格張開），兩支各自繞握把端旋轉。
+
+| 物件 ID | 中文名 | 尺寸（cm） | 材質 | 三角面 | 動畫 |
+|---|---|---|---|---:|---|
+| tool_chopsticks | 筷子（`chopstick_L`／`_R`） | 長 23 | 木色，握把端藍色 | 712 | `grip`（張開 4°） |
+| tool_tweezers | 鑷子（`tweezer_L`／`_R`＋`tweezer_joint`） | 長 12 | 霧面鋼色，握處藍色 | 372 | `grip`（張開 3°） |
+| tool_spoon | 湯匙（中式瓷湯匙） | 長 13.6 | 奶白釉，勺緣與柄尾藍色 | 1,228 | 無 |
+
+`tool_` 是新的前綴，待企劃確認。餐具不附碰撞形狀，夾取判定由程式決定（企劃書 7.4）。
+
 ### 5.3 生成 3D 的設定
 
 共同參數：`texture: true`、`pbr: false`、`texture_quality: "standard"`、`texture_version: "v3.5-20260815"`、`delight: true`；不設定 `export_orientation`。網頁版上對應的選項名稱見流程文件第 12 節。
