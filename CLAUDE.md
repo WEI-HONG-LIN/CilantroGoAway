@@ -6,7 +6,7 @@ Godot 4.5（GDScript、Jolt Physics）的 3D Q 版休閒尋物遊戲：玩家把
 
 | 內容 | 位置 |
 |---|---|
-| 企劃書（玩法規則，目前 v1.1） | `香菜退散_Godot遊戲企劃書.md` |
+| 企劃書（玩法規則，目前 v1.2） | `香菜退散_Godot遊戲企劃書.md` |
 | 決策紀錄 | `docs/decisions.md` |
 | 所有角色必守的規範 | `docs/roles/00_共同規範.md` |
 | 各角色的目標與規範 | `docs/roles/01_製作人.md` … `08_測試遊玩QA.md` |
