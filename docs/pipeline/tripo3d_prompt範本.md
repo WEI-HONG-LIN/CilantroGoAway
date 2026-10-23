@@ -154,8 +154,11 @@ isolated single object, game-ready low poly prop, closed watertight mesh, solid 
 | 5 | decoy_scallion | 蔥花 | 誘餌 | 6–10 | 0.6×0.6×0.3 | Blender 手工 | 凸包 ×1 | 0.7 | 是 | — |
 | 6 | cilantro_* | 香菜 | 目標 | — | — | 共用模型 | — | 0.6／1.05 | 是 | — |
 | 7 | bowl_soup_small | 小湯碗（1-6 套餐的小碗牛肉湯） | 容器 | 1 | 12×12×6 | Tripo 圖生（或 Blender 旋轉成形） | 凹面 `-colonly` | — | — | — |
+| 8 | deco_noodle_strands | 裝飾散麵（掛在麵條團與碗緣，不能互動） | 裝飾（固定） | 3–5 | 長 8–12，粗 0.5 | Blender 沿曲線手工 | 無 | — | — | — |
 
 湯：牛肉湯預設，混濁度 0.6，液面高度在碗高的 70%。
+
+麵條維持「麵條團」，不做單根可互動的麵條（2026-10-23 使用者確認，維持 D-20261020-02）；散麵只是裝飾，單根軟麵列為 MVP 後的擴充。
 
 **風格基準物件：牛肉塊 A**（`art/source/style_anchor/beef_noodle_soup_beef_chunk_a.png`，GPT Image 2）。全遊戲的風格都以它為準。
 
