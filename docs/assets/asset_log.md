@@ -119,15 +119,15 @@
 
 ### cilantro_full／_small／_fragment（香菜，全遊戲共用）
 - 用途：目標物（企劃書 3.2、4.2：完整葉、小葉、碎葉 × 2 色＋浸濕變體）
-- 管道：Blender 手工（Claude 透過 Blender MCP 以 Python 建立，2026-10-23）。另有 Tripo 版 prompt 供比較（尚未生成）
-- 原始檔：art/source/shared/tableware.blend（`cilantro` 集合）
-- 造型：
-  - full：一根莖、頂端三片扇形小葉（中央大、兩側小葉有短柄），約 2.1×2.4 cm
-  - small：一片扇形小葉＋短柄，約 1.5×1.5 cm
-  - fragment：一片撕下的葉片、下緣鋸齒狀撕口、沒有莖，約 0.7×0.4 cm
-  - 每片小葉分三個圓瓣，葉片厚 0.8 mm，葉緣微微上翹；原點在葉柄根部（fragment 在撕口中央）
-- 顏色（sRGB，粗糙度）：亮綠 (40,136,56) 0.8；深綠 (30,112,50) 0.8；浸濕 (26,72,40) 0.35
-- 明度（CIE L*）：香菜亮綠 50.8、深綠 41.4、浸濕 26.8；蔥花外皮 67.6、蔥花切面 91.2。香菜和蔥花差 ≥ 16，灰階對照圖已確認可分辨；青江菜靠寬大湯匙形葉和淡色粗梗區分
-- 三角面數：full 272、small 104、fragment 64；材質 1 個；碰撞 `-convcolonly` 凸包 ×1；浮力取樣點 `Buoyancy_01`–`_04`（fragment 3 個）
-- 匯出：art/models/shared/cilantro/cilantro_<full|small|fragment>_<light|dark|soaked>.glb（3 造型 × 3 材質 = 9 個）
-- 授權：自製，無第三方授權問題
+- 管道：Tripo 生成 → Blender 清理（D-20261023-07）。參考圖用 GPT Image 2，3D 用 P1、face_limit 500 生成（實際約 3,000 面）
+- 參考圖與原始檔：art/source/beef_noodle_soup/ref_cilantro_<full|small|fragment>_tripo.png、tripo_cilantro_<full|small|fragment>.glb（共用資產，之後可移到 shared/）
+- prompt：建模計畫文件「香菜（Tripo 版）」段落；小葉用第 2 版（圓扇形嫩葉，第 1 版畫成和完整葉一樣的三裂葉）
+- Tripo task ID／seed／方案：<待補>
+- Blender 清理：減面到 600 三角面；補 Tripo 原始的小破洞（小葉 6 邊、碎葉 3 邊）；用主成分把葉面轉平（Tripo 照參考圖的 60° 視角把葉子做成傾斜）；原點在葉柄根部，碎葉在撕口中央
+- 尺寸：full 2.1×2.9 cm、small 1.5×1.4 cm、fragment 0.7×0.8 cm；厚度約 0.7–2.5 mm（含葉面彎曲）
+- 顏色：貼圖 512²。亮綠＝原貼圖 ×0.85；深綠 ×(0.62,0.70,0.62)；浸濕 ×(0.38,0.46,0.40)、粗糙度 0.35。貼圖存在 art/source/shared/cilantro_tex/
+- 明度（貼圖中位數 CIE L*）：亮綠約 50、深綠約 41、浸濕約 27；蔥花外皮 67.6、切面 91.2。灰階對照圖已確認可分辨；青江菜靠寬大湯匙形葉和淡色粗梗區分
+- 碰撞 `-convcolonly` 凸包 ×1；浮力取樣點 `Buoyancy_01`–`_04`（碎葉 3 個）
+- 匯出：art/models/shared/cilantro/cilantro_<full|small|fragment>_<light|dark|soaked>.glb（3 造型 × 3 材質 = 9 個，每個 360–510 KB）
+- 原始檔：art/source/shared/tableware.blend（`cilantro` 集合；Blender 手工 v1 在 `cilantro_blender_v1` 集合，已排除不匯出）
+- 授權：Tripo 生成，依生成時的方案（需為 Pro 以上才可商用）；<待補：生成時的方案>

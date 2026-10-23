@@ -152,7 +152,7 @@ isolated single object, game-ready low poly prop, closed watertight mesh, solid 
 | 3 | food_noodle_clump_a／_b | 麵條團（2 種造型） | 食物 | 2–3 | 6×5×2 | Tripo 多視角 | 凸包 ×2 | 1.08 | 是 | Top／Bottom |
 | 4 | food_bok_choy_leaf_a／_b | 青江菜葉（A 大外葉、B 小內葉；單片，不是整把） | 食物 | 2 | 8×4×1.2 | Tripo 圖生 | 凸包 ×2 | 0.9 | 是 | Top／Bottom |
 | 5 | decoy_scallion_a／_b／_c | 蔥花（A 圓圈、B 斜切橢圓、C 薄片；已完成，`art/models/shared/`，牛肉麵與水餃共用） | 誘餌 | 6–10 | 0.6×0.6×0.22 | Blender 手工 | 凸包 ×1 | 0.7 | 是 | — |
-| 6 | cilantro_full／_small／_fragment | 香菜（完整葉、小葉、碎葉；亮綠／深綠／浸濕，已完成，`art/models/shared/cilantro/`，全遊戲共用） | 目標 | — | 2.1×2.4／1.5×1.5／0.7×0.4 | Blender 手工 | 凸包 ×1 | 0.6／1.05 | 是 | — |
+| 6 | cilantro_full／_small／_fragment | 香菜（完整葉、小葉、碎葉；亮綠／深綠／浸濕，已完成，`art/models/shared/cilantro/`，全遊戲共用） | 目標 | — | 2.1×2.9／1.5×1.4／0.7×0.8 | Tripo 圖生＋Blender 減面（D-20261023-07） | 凸包 ×1 | 0.6／1.05 | 是 | — |
 | 7 | bowl_soup_small | 小湯碗（1-6 套餐的小碗牛肉湯） | 容器 | 1 | 12×12×6 | Blender，麵碗縮放（已完成） | 凹面 `-colonly` | — | — | — |
 | 8 | deco_noodle_strands | 裝飾散麵（掛在麵條團與碗緣，不能互動） | 裝飾（固定） | 3–5 | 長 8–12，粗 0.5 | Blender 沿曲線手工 | 無 | — | — | — |
 
@@ -224,6 +224,56 @@ isolated on the white background, centered, fully visible, filling about 75% of 
 shadowless.
 ```
 
+**香菜（全遊戲共用，D-20261023-07）**：視角改成 60° 俯視，讓葉形輪廓完整入鏡；Tripo 會照這個角度把葉子做成傾斜，清理時要轉平。3D 用 P1、face_limit 500，之後在 Blender 減到 600 三角面。
+
+完整葉（一根莖、三片小葉）：
+```text
+cute stylized 3D game asset, toy-like, soft clay look, chunky rounded shapes, slightly
+exaggerated proportions, simple clean silhouette, hand-painted colors, matte finish.
+A single sprig of fresh cilantro (coriander leaf) as a garnish on Taiwanese beef noodle soup:
+one thin slender pale green stem that splits at the top into three small fan-shaped leaflets,
+one larger leaflet at the tip and two smaller ones on short side stalks, each leaflet deeply
+divided into three rounded lobes with softly scalloped wavy edges, the leaflets thin like a real
+leaf but with a little thickness, lying almost flat with the leaflets gently cupped, the stem
+clearly visible and separate from the leaves, fresh medium green leaves slightly darker than
+the stem, dull matte surface without shine.
+The cilantro sprig is the only object in the image, isolated and floating alone on the white
+background, centered, fully visible, filling about 75% of the frame, 60 degree top-down view so
+the outline of every leaflet and the stem are clearly visible, on a plain pure white background,
+soft even studio lighting, shadowless.
+```
+
+小葉（第 2 版；第 1 版寫 `deeply divided into three rounded lobes`，結果畫成和完整葉一樣的三裂葉）：
+```text
+cute stylized 3D game asset, toy-like, soft clay look, chunky rounded shapes, slightly
+exaggerated proportions, simple clean silhouette, hand-painted colors, matte finish.
+A single tiny young cilantro (coriander) leaf as a garnish on Taiwanese beef noodle soup:
+one small round fan-shaped leaf, wider than it is tall, like a rounded kidney shape, the edge
+only shallowly notched into soft rounded scallops, not deeply divided, no separate leaflets,
+attached to a very short thin pale green stem, thin like a real leaf but with a little
+thickness, lying almost flat and gently cupped, fresh medium green leaf slightly darker than
+the stem, dull matte surface without shine.
+The cilantro leaf is the only object in the image, isolated and floating alone on the white
+background, centered, fully visible, filling about 75% of the frame, 60 degree top-down view so
+the round outline of the leaf and the short stem are clearly visible, on a plain pure white
+background, soft even studio lighting, shadowless.
+```
+
+碎葉（沒有莖）：
+```text
+cute stylized 3D game asset, toy-like, soft clay look, chunky rounded shapes, slightly
+exaggerated proportions, simple clean silhouette, hand-painted colors, matte finish.
+A single small torn fragment of a fresh cilantro (coriander) leaf, a scrap that fell into
+Taiwanese beef noodle soup: no stem at all, just one small piece of leaf blade, the top edge
+keeping two or three rounded lobes with softly scalloped wavy edges typical of cilantro, the
+bottom edge a jagged irregular torn line, thin like a real leaf but with a little thickness,
+lying almost flat and gently cupped, fresh medium green, dull matte surface without shine.
+The cilantro leaf fragment is the only object in the image, isolated and floating alone on the
+white background, centered, fully visible, filling about 75% of the frame, 60 degree top-down
+view so the rounded lobes and the torn edge are clearly visible, on a plain pure white
+background, soft even studio lighting, shadowless.
+```
+
 ### 5.4 共用容器（Blender，2026-10-23 完成）
 
 所有容器用同一套奶白釉＋藍色回紋，原始檔都在 `art/source/shared/tableware.blend`（做法見流程文件 6.1）。
@@ -282,7 +332,7 @@ shadowless.
 請依照以下規則：
 1. 把料理拆成「可以各自拿起的物件」。每個物件一次生成、一個 .glb。容器是空的、固定不動。
    液體（湯、醬汁）不建模，寫成 shader 需求。
-2. 又薄又小的葉片（香菜、蔥花、碎葉、海苔）標為「Blender 手工」，不用 Tripo。
+2. 又薄又小的葉片（蔥花、碎葉、海苔）標為「Blender 手工」，不用 Tripo；香菜例外，用共用的 Tripo 模型（D-20261023-07）。
 3. 每個物件寫出真實尺寸（cm）、密度（g/cm³，水 = 1.0）、是否平底、碰撞形狀（凸包數量，或容器用凹面）、
    香菜可以附著的面（Top／Side／Back／Bottom）。
 4. 列出可以重用的既有資產：麵碗、湯碗、盤子、醬碟、青菜、共用香菜。
