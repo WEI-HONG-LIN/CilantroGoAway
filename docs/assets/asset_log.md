@@ -13,9 +13,12 @@
 - 3D 模型版本：<待補>
 - Task ID：Tripo 網頁版不顯示，以 Model Info 截圖（生成時間、Privacy 會員設定）為準，存 `art/source/licenses/tripo/`
 - Seeds：<待補>
-- 後處理：<待補>
-- Blender 修改：尚未清理
-- 最終三角面數／貼圖：<待補>
+- 後處理：轉檔 GLB
+- Blender 修改（2026-10-23）：合併重複頂點、縮放到長 4 cm、壓平最底 4% 當平穩底面、原點在底部中心；原始檔 art/source/beef_noodle_soup/beef_noodle_soup.blend（`food` 集合；Tripo 原始在 `raw` 集合）
+- 尺寸：4.0×3.1×2.9 cm
+- 最終三角面數／貼圖：2,980／512²（Tripo 原貼圖）
+- 碰撞：`-convcolonly` 凸包 ×1（230 面）；掛點 `Anchor_BeefChunk_Top_01`、`_Side_01`（-Y 的切面）、`_Bottom_01`；浮力點 `Buoyancy_01`–`_04`
+- 匯出：art/models/beef_noodle_soup/food_beef_chunk_a.glb
 - 使用點數：<待補>
 - 授權：Tripo Pro（可商用；使用者確認 2026-10-23）。證明：訂閱收據＋生成紀錄截圖，存本機 `art/source/licenses/tripo/`
 
@@ -31,11 +34,47 @@
 - Task ID：Tripo 網頁版不顯示，以 Model Info 截圖（生成時間、Privacy 會員設定）為準，存 `art/source/licenses/tripo/`
 - Seeds：<待補>
 - 後處理：轉檔 GLB
-- Blender 修改：尚未清理；底部有筋的溝但沒有筋的顏色，可接受，清理時壓平
-- 最終三角面數／貼圖：<待補>
+- Blender 修改（2026-10-23）：同牛肉塊 A（縮放到長 4 cm、壓平底部）；底部筋的溝保留；原始檔 art/source/beef_noodle_soup/beef_noodle_soup.blend（`food` 集合；Tripo 原始在 `raw` 集合）
+- 尺寸：4.0×3.1×1.3 cm
+- 最終三角面數／貼圖：3,012／512²
+- 碰撞：凸包 ×1（228 面）；掛點 `Anchor_BeefChunk_Top_01`、`_Side_01`、`_Bottom_01`；浮力點 ×4
+- 匯出：art/models/beef_noodle_soup/food_beef_chunk_b.glb
 - 使用點數：<待補>
 - 授權：Tripo Pro（可商用；使用者確認 2026-10-23）。證明：訂閱收據＋生成紀錄截圖，存本機 `art/source/licenses/tripo/`
 
+
+### food_noodle_clump_a／_b
+- 料理：beef_noodle_soup
+- 管道：Tripo 網頁版（參考圖 GPT Image 2，prompt 範本 5.2「麵條團」；單張圖生 3D，多視角的側視角高度不對而放棄）
+- 參考圖／原始：art/source/beef_noodle_soup/ref_noodle_clump_a/_b.png、tripo_noodle_clump_a/_b.glb
+- Blender 修改（2026-10-23）：縮放到 6 cm、壓平底部；A 的幾段麵條是分開的網格，都保留（一起當一個剛體）；B 原本太扁，加上中間隆起、每條麵條隨機抬高與波浪起伏；原始檔 art/source/beef_noodle_soup/beef_noodle_soup.blend（`food` 集合；Tripo 原始在 `raw` 集合）
+- 尺寸：A 6.0×5.8×1.7 cm；B 6.0×6.0×1.5 cm
+- 三角面數／貼圖：A 3,011、B 2,888／512²
+- 碰撞：沿長邊切兩半各一個凸包 `_a-convcolonly`、`_b-convcolonly`（約 225 面）；掛點 `Anchor_NoodleClump_Top_01`、`_Bottom_01`；浮力點 ×4
+- 匯出：art/models/beef_noodle_soup/food_noodle_clump_a.glb、_b.glb
+- 備註：香菜藏在麵條縫隙時，凸包會蓋住縫隙，程式要讓香菜的點選優先於食物碰撞
+- 授權：Tripo Pro（可商用；使用者確認 2026-10-23）。證明：訂閱收據＋Model Info 截圖，存本機 `art/source/licenses/tripo/`
+
+### food_bok_choy_leaf_a／_b
+- 料理：beef_noodle_soup
+- 管道：Tripo 網頁版（prompt 範本 5.2「青江菜葉」B 版；A 用同一份 prompt 改成大外葉重新生成）
+- 參考圖／原始：art/source/beef_noodle_soup/ref_bok_choy_leaf_a/_b.png、tripo_bok_choy_leaf_a/_b.glb
+- Blender 修改（2026-10-23）：Tripo 照參考圖的俯視角把葉子做成斜的（A 約 45°），用主成分把葉面轉平，葉尖跟著壓低；縮放（A 長 8 cm、B 長 6 cm）；原點在底部中心；不壓平底部（保留梗的 U 形）；原始檔 art/source/beef_noodle_soup/beef_noodle_soup.blend（`food` 集合；Tripo 原始在 `raw` 集合）
+- 尺寸：A 8.0×5.5×1.5 cm；B 4.4×6.0×1.4 cm
+- 三角面數／貼圖：A 2,888、B 2,924／512²
+- 碰撞：沿長邊切兩半各一個凸包；掛點 `Anchor_BokChoyLeaf_Top_01`、`_Bottom_01`；浮力點 ×4
+- 匯出：art/models/beef_noodle_soup/food_bok_choy_leaf_a.glb、_b.glb
+- 備註：柔軟感建議用頂點晃動 shader，不用軟體物理
+- 授權：Tripo Pro（可商用；使用者確認 2026-10-23）。證明：訂閱收據＋Model Info 截圖，存本機 `art/source/licenses/tripo/`
+
+### deco_noodle_strands_a／_b／_c／_d
+- 料理：beef_noodle_soup（裝飾散麵，固定、不能互動，掛在麵條團與碗緣）
+- 管道：Blender 手工（Bezier 曲線＋bevel，轉成網格；Claude 透過 Blender MCP，2026-10-23）
+- 原始檔：art/source/beef_noodle_soup/beef_noodle_soup.blend（`deco` 集合）
+- 尺寸：長 8.7／9.7／10.6／8.3 cm，粗 0.5 cm；一端微微下垂，可以掛在碗緣
+- 三角面數：248–308；材質 1 個（麵條暖黃 sRGB 0.886,0.667,0.302，取自麵條團 A 貼圖中位數）；無碰撞
+- 匯出：art/models/beef_noodle_soup/deco_noodle_strands_a.glb … _d.glb
+- 授權：自製，無第三方授權問題
 
 ### bowl_noodle
 - 料理：beef_noodle_soup（麵碗）
