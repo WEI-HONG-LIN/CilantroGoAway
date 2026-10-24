@@ -1,7 +1,7 @@
 # 《香菜退散！》Godot 遊戲企劃書
 
 **英文名稱：** Cilantro Hunter
-**文件版本：** 1.4
+**文件版本：** 1.5
 **目標引擎：** Godot 4.5.x（固定小版本），物理引擎使用 Jolt Physics
 **平台優先順序：** PC 原型 → 桌面完整版本 → 評估行動平台
 
@@ -16,6 +16,7 @@
 | 1.2 | 2026-10-23 | 新增 3.1「料理清單」，正式定義各料理的 `dish_id`；版控改為只上傳開發文件（5.1） |
 | 1.3 | 2026-10-23 | 滷肉飯的蛋改為對半滷蛋、醃菜定為黃蘿蔔片；牛肉麵的青菜改為單片青江菜葉；1-6 套餐新增小湯碗與小盤子（3.1、3.3、4.2） |
 | 1.4 | 2026-10-24 | 提示改為「臭味煙霧」並加確認視窗（2.2、8.1、8.2）；暫停選單的重新開始／回選關加二次確認；設定頁範圍；教學提示規則與腳本（8.1、`docs/specs/tutorial.md`）；存檔加設定區段（5.1） |
+| 1.5 | 2026-10-24 | 6.3 補上 HUD 與提示用的訊號（操作狀態、剩餘數、游標下的食物、提示煙霧），並寫明暫停時各節點的 `process_mode` |
 
 ---
 
@@ -335,17 +336,26 @@ Game (Node3D)
 
 | 訊號 | 發送者 | 接收者／用途 |
 |---|---|---|
+| `interaction_state_changed(state)` | `InteractionController` | HUD 切換模式提示與游標。`state` 為 `Idle`／`Inspecting`／`Carrying`／`Stirring`／`Resolving`（見 2.3），狀態改變時只發一次 |
 | `food_selected(food)` | `InteractionController` | HUD 顯示模式提示 |
+| `hovered_food_changed(food, can_pick_up)` | `InteractionController` | HUD 在 `can_pick_up == false` 時顯示禁止游標與「食物還在滾」提示。游標移到另一個食物、或游標下的食物從滾動變成停穩時發出；游標不在食物上時 `food` 為 `null` |
 | `food_dropped(food, position)` | `InteractionController` | 音效、教學提示 |
 | `food_settled(food)` | `FoodItem` | `InteractionController` 允許再次拿取 |
 | `cilantro_removed(piece)` | `CilantroPiece` | `LevelController` 更新剩餘數、`ScoringSystem` |
+| `cilantro_remaining_changed(remaining, total)` | `LevelController` | HUD 剩餘香菜數。開局先發一次；之後在移除動畫結束、計數更新後才發 |
 | `misgrab(target)` | `ToolController` | `ScoringSystem` 扣精準度、音效 |
 | `food_inspected(food)` | `FoodItem` | `ScoringSystem` 探索度 |
 | `soup_stirred(strength)` | `SoupVolume` | 音效、教學提示 |
 | `object_splashed(body, speed)` | `SoupVolume` | 濺起粒子、音效 |
 | `tool_changed(tool_id)` | `ToolController` | HUD 更新目前餐具 |
-| `hint_used()` | HUD（確認後、煙霧出現時發出） | `ScoringSystem` 取消三星資格；負責提示的節點選香菜並產生煙霧（節點名稱由程式決定） |
+| `hint_used()` | HUD（玩家在確認視窗按「聞一下」後發出；不需確認時按下即發） | `ScoringSystem` 取消三星資格；負責提示的節點依 8.1 規則選一株香菜 |
+| `hint_revealed(hint)` | 負責提示的節點（名稱由程式決定） | 煙霧特效與音效。`hint` 包含：煙霧位置（已加上 8.1 的隨機偏移）、要跟隨的節點（食物或湯中的香菜）、藏法 `on_food`／`under_food`／`floating`／`sunken`。正面或背面依發出當下香菜掛點朝向鏡頭與否判斷 |
+| `hint_cleared()` | 負責提示的節點 | 該株香菜被挑掉時發出，煙霧立刻散掉（6 秒到期的淡出由特效自己處理） |
 | `level_completed(result)` | `LevelController` | `GameManager` 顯示結算、`SaveSystem` 存檔 |
+
+UI 的確認視窗與提示冷卻圈只在 HUD 內處理，不另發訊號。
+
+**暫停與 `process_mode`：** 暫停時用 `get_tree().paused = true`。3D 世界（料理、食物、湯、餐具、`InteractionController`）設為 `PROCESS_MODE_PAUSABLE`，暫停時物理、湯液、動畫與輸入全部停止，不會收到點擊；暫停選單與確認視窗設為 `PROCESS_MODE_WHEN_PAUSED`；HUD 設為 `PROCESS_MODE_ALWAYS`（暫停中仍要顯示，平常也要運作，用 `WHEN_PAUSED` 會讓 HUD 在遊戲中停住）。確認視窗打開時同樣暫停。
 
 ## 7. 核心互動實作規格
 
