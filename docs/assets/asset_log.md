@@ -141,8 +141,11 @@
 - 管道：Blender 手工（Claude 透過 Blender MCP 以 Python 建立，2026-10-23）
 - 原始檔：art/source/shared/tableware.blend
 - 匯出：art/models/tools/tool_chopsticks.glb、tool_tweezers.glb、tool_spoon.glb
-- 三角面數：712／372／1,228；材質各 2 個（主色＋藍色）
+- 三角面數：712／372／1,496；材質各 2 個（主色＋藍色）
 - 動畫：筷子、鑷子各有 `grip`（12 格）
+- 2026-10-25 改版（使用者回饋）：
+  - 筷子改成兩根獨立的直筷，尾端不相連。支點在離筷尖 1.5 單位（手握處），根節點原點在筷尖。`grip` 只動 `chopstick_R`（上筷，第 1 格張開、第 6 格夾合、第 12 格張開），`chopstick_L`（下筷）固定。
+  - 湯匙改成一體成形的中式湯匙：橢圓匙面平順收窄成匙柄，匙柄末端上翹，厚度 0.3 cm。原點在匙面中心。
 - 授權：自製，無第三方授權問題
 
 ### decoy_scallion_a／_b／_c
