@@ -109,7 +109,7 @@
 | Aspect Ratio | 1:1 |
 | Number of Images | 4（想省點數可選 2） |
 | 4K Resolution | 關 |
-| 參考圖 | 網頁版不支援上傳參考圖；改用文字描述基準質感（3.2） |
+| 參考圖 | **2026-11-09 起可以上傳**（Prompt 框左下的圖片按鈕）：上傳 `art/source/style_anchor/beef_noodle_soup_beef_chunk_a.png`，prompt 開頭加「Match the art style of the reference image exactly (same toy-like clay look, same level of surface detail, same deep muted colors, same dull matte finish); the reference only shows the style, draw a different object.」，後面照常接 2.1 的文字描述。滷肉飯第一批就對齊風格 |
 
 **其他方式：**
 - **Tripo API**：`POST /v3/generation/text-to-image`（`seedream_v4`，5 點；`banana_pro` 品質較高，15 點）；之後把該任務的 `task_id` 直接當成圖生 3D 的 `input`。
@@ -339,6 +339,14 @@
 | **Texture** | ④ 重新上貼圖 | — | 是否能指定貼圖模型版本與去除光影 |
 | **Rig** | 不使用 | — | — |
 | 下載／匯出 | ④ 轉檔 | — | 能否選 GLB、貼圖尺寸、原點到底部中心、底部壓平 |
+
+**2026-11-09 實測補充（Claude in Chrome 操作，滷肉飯）：**
+- Image 分頁：GPT Image 2 免費額度用完後每張 20 點（4 張 80 點）；可以上傳參考圖（見 3.3）。
+- Model 分頁：`HD Model` 是 H3.1／H3.0／H2.5；`Smart Mesh` 是 P2.0（100 點）／**P1.0 - Fast（35 點，本專案用這個）**。Smart Mesh 的 Topology 可選三角面與面數（500–20,000）。
+- 每次從 Image 分頁按 Generate 3D，Privacy 會變回 Sharing Only、面數會變回 5000，要重新設成 **Private** 和 3000。
+- Smart Mesh 產出**沒有貼圖**：點開模型，按下方工具列的 Texture（20 點）。
+- Export：GLB、Texture Resolution 512／1k／2k／4k；檔名欄位無效，下載到 Downloads 的檔名是 `tripo_convert_<uuid>.glb`，要一個一個搬、改名。
+- Model Info（縮圖左下的 i）會顯示生成時間、Privacy、Tripo 版本和參考圖。
 
 Studio（網頁版）的授權條款也還沒核對，見 10.1。
 
