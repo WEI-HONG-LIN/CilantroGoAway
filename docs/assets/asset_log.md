@@ -130,6 +130,24 @@
 - 小滷肉塊是使用者 2026-11-09 要求新增的（「加幾個長相不同的小滷肉塊」），用途和數量由關卡設計決定；掛點名稱 `PorkBit` 是 3D 美術的提案。
 - 物件 ID `food_rice_mound`、`food_pork_bit_*`、`food_greens`、`food_radish_slice` 是 3D 美術的提案，待企劃確認。
 
+### 水餃食物（dumplings，2026-11-09）
+- 管道：同上面的滷肉飯（Claude in Chrome 操作 Tripo 網頁版；GPT Image 2 上傳風格基準圖；Smart Mesh P1.0 + Texture；Private）
+- 原始檔：art/source/dumplings/ref_<物件>.png、tripo_<物件>.glb；Blender 檔 art/source/dumplings/dumplings.blend（`food`／`raw` 集合）
+- Blender 修改：同滷肉飯的共通做法。完整水餃 Tripo 做出來是立著的（摺邊朝上），已轉成**肚子朝上平躺**、長軸沿 Blender Y（Godot Z），摺邊在 +X 側，和程式的暫代水餃及掛點需求表一致；壓平最底 5%
+- 授權：Tripo Pro（可商用）。證明：Model Info 截圖存本機 `art/source/licenses/tripo/`
+
+| 物件 ID | 中文名 | 尺寸（cm） | 三角面／貼圖 | 碰撞 | 掛點 | Model Info 生成時間 |
+|---|---|---|---|---|---|---|
+| food_dumpling_a | 完整水餃 A（圓胖） | 2.8×4.2×1.7 | 2,990／512² | 凸包 ×1 | `Anchor_Dumpling_Top_01`（肚子）、`_Side_01`（摺邊旁，法線約 (0.75, 0.66, 0)）、`_Bottom_01` | 2026-11-09 22:55:09 |
+| food_dumpling_b | 完整水餃 B（細長、摺紋明顯） | 2.1×3.8×1.8 | 2,930／512² | 凸包 ×1 | 同上 | 2026-11-09 22:55:03 |
+| food_dumpling_cut | 切開的水餃（看得到餡） | 3.4×2.7×2.2 | 2,930／512² | 凸包 ×1 | `Anchor_DumplingCut_Top_01`、`_Side_01`（剖面的餡上，Godot +Z）、`_Bottom_01` | 2026-11-09 22:55:15 |
+| food_dumpling_wrapper | 水餃皮（空的） | 4.5×3.6×1.5 | 2,896／512² | 凸包 ×1（會蓋住皮的凹處） | `Anchor_DumplingWrapper_Top_01`（皮的內底）、`_Bottom_01` | 2026-11-09 22:55:21 |
+| food_dumpling_filling | 水餃餡 | 3.0×2.3×1.8 | 2,990／512² | 凸包 ×1 | `Anchor_DumplingFilling_Top_01`、`_Bottom_01` | 2026-11-09 22:55:27 |
+
+- 匯出：art/models/dumplings/<物件 ID>.glb
+- 切開的水餃、水餃皮、水餃餡是使用者 2026-11-09 要求新增的，用途由企劃和關卡設計決定；物件 ID 和掛點名稱（`DumplingCut`、`DumplingWrapper`、`DumplingFilling`）是 3D 美術的提案。
+- 水餃皮的凸包會填滿凹處：香菜如果要藏在皮裡面，程式要讓香菜的點選優先（同麵條團）。
+
 ### plate_dumpling
 - 料理：dumplings（水餃盤）
 - 管道：Blender 手工（Claude 透過 Blender MCP 以 Python 建立，2026-10-23）
