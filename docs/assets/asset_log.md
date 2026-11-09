@@ -106,6 +106,30 @@
 - 匯出：art/models/braised_pork_rice/bowl_rice.glb
 - 授權：自製，無第三方授權問題
 
+### 滷肉飯食物（braised_pork_rice，2026-11-09）
+- 管道：Tripo 網頁版，Claude 透過 Claude in Chrome 操作（2026-11-09）。參考圖 GPT Image 2，在 Image 分頁**上傳風格基準圖**（art/source/style_anchor/beef_noodle_soup_beef_chunk_a.png）＋文字描述；3D 用 Smart Mesh「P1.0 - Fast」（35 點）＋ Texture（20 點）；Privacy：Private
+- Task ID：網頁版不顯示，以 Model Info 截圖為準，存 `art/source/licenses/tripo/<物件 ID>_info.jpg`
+- 原始檔：art/source/braised_pork_rice/ref_<物件>.png、tripo_<物件>.glb；Blender 檔 art/source/braised_pork_rice/braised_pork_rice.blend（`food` 集合；Tripo 原始在 `raw` 集合）
+- 共通的 Blender 修改：合併重複頂點、重算法線、縮放、原點在底部中心、壓平最底 2–4%、凸包碰撞 `-convcolonly`（約 200 面）；掛點 Empty 的 Z 軸朝外（匯出後是 Godot +Y），葉子方向沿 Blender +Y；不加浮力點（滷肉飯不進湯）
+- 授權：Tripo Pro（可商用）。證明：Model Info 截圖（Privacy: Private、Tripo P1.0、生成時間），存本機 `art/source/licenses/tripo/`
+
+| 物件 ID | 中文名 | 尺寸（cm） | 三角面／貼圖 | 碰撞 | 掛點 | Model Info 生成時間 |
+|---|---|---|---|---|---|---|
+| food_rice_mound | 飯面＋肉燥（固定，不能拿起） | 直徑約 8.1、高 5.65 | 4,990／1024² | 凸包 ×1 | `Anchor_Rice_Top_01`–`_06` | 2026-11-09 21:58:28 |
+| food_pork_chunk_a | 滷肉塊 A（方塊） | 3.0×2.4×2.0 | 2,984／512² | 凸包 ×1 | `Anchor_PorkChunk_Top_01`、`_Side_01`（-Y 面，Godot +Z）、`_Bottom_01` | 2026-11-09 21:56:19 |
+| food_pork_chunk_b | 滷肉塊 B（斜楔形） | 2.9×3.2×2.0 | 2,984／512²（原 4,998，已減面） | 凸包 ×1 | 同上 | 2026-11-09 21:58:39 |
+| food_pork_bit_a／_b／_c | 小滷肉塊（3 種造型） | 1.6×1.2×1.4／1.5×1.3×1.2／1.4×1.5×1.2 | 約 1,500／512² | 凸包 ×1 | `Anchor_PorkBit_Top_01`、`_Bottom_01` | 22:30:56／22:30:50／22:30:43 |
+| food_egg_half | 對半滷蛋 | 4.0×3.6×2.0 | 2,727／512² | 凸包 ×1 | `Anchor_EggHalf_Top_01`（蛋白圓頂）、`_Side_01`、`_Bottom_01`（切面） | 2026-11-09 21:58:51 |
+| food_greens | 青菜（一小把青江菜） | 4.4×3.6×2.4 | 2,984／512² | 沿長邊切兩半，凸包 ×2 | `Anchor_Greens_Top_01`、`_Bottom_01` | 2026-11-09 21:58:09 |
+| food_radish_slice | 黃蘿蔔片 | 直徑 3.0、厚 0.5 | 2,896／512² | 凸包 ×1 | `Anchor_Radish_Top_01`、`_Bottom_01` | 2026-11-09 21:57:53 |
+
+- 匯出：art/models/braised_pork_rice/<物件 ID>.glb
+- 滷蛋：Tripo 做出來是切面朝上斜放，已轉成**切面朝下**（企劃書與掛點需求表的擺法），Bottom 要翻過來才看得到。
+- 飯面：原點在底部中心，放在 `bowl_rice` 裡 y = 0.15（碗內底）時，頂點在 y = 0.715，和程式的暫代飯面同高。下半部依碗內壁收窄（底部半徑 0.27、頂緣約 0.41），不會穿出碗壁。頂面大部分是肉燥，白飯只在外圈。
+- 飯面掛點位置沿用程式暫代飯面的 `RICE_ANCHORS`，但 03 和 05 太靠邊打不到飯面，往中心移了 15% 和 5%；以 GLB 裡的位置為準。
+- 小滷肉塊是使用者 2026-11-09 要求新增的（「加幾個長相不同的小滷肉塊」），用途和數量由關卡設計決定；掛點名稱 `PorkBit` 是 3D 美術的提案。
+- 物件 ID `food_rice_mound`、`food_pork_bit_*`、`food_greens`、`food_radish_slice` 是 3D 美術的提案，待企劃確認。
+
 ### plate_dumpling
 - 料理：dumplings（水餃盤）
 - 管道：Blender 手工（Claude 透過 Blender MCP 以 Python 建立，2026-10-23）
