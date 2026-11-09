@@ -133,13 +133,13 @@
 ### 水餃食物（dumplings，2026-11-09）
 - 管道：同上面的滷肉飯（Claude in Chrome 操作 Tripo 網頁版；GPT Image 2 上傳風格基準圖；Smart Mesh P1.0 + Texture；Private）
 - 原始檔：art/source/dumplings/ref_<物件>.png、tripo_<物件>.glb；Blender 檔 art/source/dumplings/dumplings.blend（`food`／`raw` 集合）
-- Blender 修改：同滷肉飯的共通做法。完整水餃 Tripo 做出來是立著的（摺邊朝上），已轉成**肚子朝上平躺**、長軸沿 Blender Y（Godot Z），摺邊在 +X 側，和程式的暫代水餃及掛點需求表一致；壓平最底 5%
+- Blender 修改：同滷肉飯的共通做法。完整水餃**立著放、摺邊朝上**（使用者 2026-11-09 選定；暫代水餃和掛點需求表原本是平躺），長軸沿 Blender Y（Godot Z），兩面肚子朝 ±X；壓平最底 6% 讓它站穩
 - 授權：Tripo Pro（可商用）。證明：Model Info 截圖存本機 `art/source/licenses/tripo/`
 
 | 物件 ID | 中文名 | 尺寸（cm） | 三角面／貼圖 | 碰撞 | 掛點 | Model Info 生成時間 |
 |---|---|---|---|---|---|---|
-| food_dumpling_a | 完整水餃 A（圓胖） | 2.8×4.2×1.7 | 2,990／512² | 凸包 ×1 | `Anchor_Dumpling_Top_01`（肚子）、`_Side_01`（摺邊旁，法線約 (0.75, 0.66, 0)）、`_Bottom_01` | 2026-11-09 22:55:09 |
-| food_dumpling_b | 完整水餃 B（細長、摺紋明顯） | 2.1×3.8×1.8 | 2,930／512² | 凸包 ×1 | 同上 | 2026-11-09 22:55:03 |
+| food_dumpling_a | 完整水餃 A（圓胖） | 1.8×4.2×2.6 | 2,990／512² | 凸包 ×1 | `Anchor_Dumpling_Top_01`（+X 側的肚子，半高處，法線朝 +X）、`_Side_01`（-X 側、摺邊正下方，3/4 高處）、`_Bottom_01` | 2026-11-09 22:55:09 |
+| food_dumpling_b | 完整水餃 B（摺紋明顯） | 1.9×3.8×2.0 | 2,930／512² | 凸包 ×1 | 同上 | 2026-11-09 22:55:03 |
 | food_dumpling_cut | 切開的水餃（看得到餡） | 3.4×2.7×2.2 | 2,930／512² | 凸包 ×1 | `Anchor_DumplingCut_Top_01`、`_Side_01`（剖面的餡上，Godot +Z）、`_Bottom_01` | 2026-11-09 22:55:15 |
 | food_dumpling_wrapper | 水餃皮（空的） | 4.5×3.6×1.5 | 2,896／512² | 凸包 ×1（會蓋住皮的凹處） | `Anchor_DumplingWrapper_Top_01`（皮的內底）、`_Bottom_01` | 2026-11-09 22:55:21 |
 | food_dumpling_filling | 水餃餡 | 3.0×2.3×1.8 | 2,990／512² | 凸包 ×1 | `Anchor_DumplingFilling_Top_01`、`_Bottom_01` | 2026-11-09 22:55:27 |
