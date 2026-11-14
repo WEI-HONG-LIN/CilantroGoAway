@@ -177,7 +177,7 @@
 - 管道：Blender 手工（2026-11-14），貼圖用程式產生
 - 原始檔：art/source/env/xiaochi/xiaochi.blend（`_preview` 集合不匯出）；貼圖 art/source/env/xiaochi/tex/
 - 尺寸與原點：和 `scene_table` 完全相同。桌面 9×6、厚 0.4，頂面 y = 0，原點在桌面中心，桌腳到 y = -7.5
-- 三角面：1,484（桌面 300、桌框 4×108、桌腳 4×188）；材質 2 個：`mat_env_xiaochi_table_top`（roughness 0.7）、`mat_env_xiaochi_table_frame`（0.72）
+- 三角面：1,484（桌面 300、桌框 4×108、桌腳 4×188）；材質 2 個：`mat_env_xiaochi_table_top`、`mat_env_xiaochi_table_frame`。2026-11-14 使用者反映遊戲內桌面太亮面、偏橘，改為 roughness 0.86、specular 0.25（遊戲內由 art/materials/env_xiaochi/env_xiaochi_table_{top,frame}.tres 覆寫；重新匯出 glb 時要沿用這兩個值）
 - 貼圖：桌面 2048×1366（平均 #683A1F，灰階約 27%）、桌框 1024²（平均 #57301A）。木紋寬、低對比，最細的深色紋約 2.5 cm
 - UV：UVMap＋UV2（lightmap，匯出為 TEXCOORD_1）
 - 碰撞：無，沿用 `game.tscn` 的桌面碰撞
