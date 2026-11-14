@@ -13,7 +13,7 @@ description: "Use for Godot 4.5 GDScript implementation: interaction state machi
 
 ## 工作範圍
 
-- 只修改這些位置：`project.godot`、`scenes/`（`ui/` 除外）、`scripts/`（`ui/` 除外）、`resources/`（`levels/` 除外）、`tests/`。
+- 只修改這些位置：`project.godot`、`scenes/`（`ui/` 除外）、`scripts/`（`ui/` 除外）、`resources/`（`levels/` 除外）、`tests/`，以及湯的 shader（`shaders/soup_*`、`shaders/ripple_sim.gdshader`）。
 - 需要其他角色修改時，寫在交付說明的「需要誰接手」，不要直接改別人的檔案。
 - 規格不清楚時先向遊戲企劃提問；必須先做時選最保守的做法，並在程式中標註 `# TODO(規格): …`。
 

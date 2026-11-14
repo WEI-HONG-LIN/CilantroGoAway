@@ -28,9 +28,9 @@ Godot 4.5（GDScript、Jolt Physics）的 3D Q 版休閒尋物遊戲：玩家把
 | 01 製作人 | `producer` | `docs/decisions.md`、`docs/backlog.md`、`docs/reports/` |
 | 02 遊戲企劃 | `game-designer` | `香菜退散_Godot遊戲企劃書.md`、`docs/specs/` |
 | 03 關卡設計 | `level-designer` | `resources/levels/`、`docs/levels/` |
-| 04 3D 美術 | `artist-3d` | `art/`、`shaders/`、`docs/pipeline/`、`docs/assets/asset_log.md` |
+| 04 3D 美術 | `artist-3d` | `art/`、`shaders/`（湯的 shader 除外）、`docs/pipeline/`、`docs/assets/asset_log.md` |
 | 05 UI／UX 設計 | `ui-ux-designer` | `scenes/ui/`、`scripts/ui/`、`art/ui/` |
-| 06 遊戲邏輯程式 | `gameplay-programmer` | `project.godot`、`scenes/`（`ui/` 除外）、`scripts/`（`ui/` 除外）、`resources/`（`levels/` 除外）、`tests/` |
+| 06 遊戲邏輯程式 | `gameplay-programmer` | `project.godot`、`scenes/`（`ui/` 除外）、`scripts/`（`ui/` 除外）、`resources/`（`levels/` 除外）、`tests/`、湯的 shader（`shaders/soup_*`、`shaders/ripple_sim.gdshader`） |
 | 07 音效設計 | `sound-designer` | `audio/`、`docs/assets/audio_licenses.md` |
 | 08 測試遊玩 | `qa-tester` | `docs/qa/` |
 
