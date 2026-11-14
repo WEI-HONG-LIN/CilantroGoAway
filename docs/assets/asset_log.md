@@ -170,3 +170,30 @@
 - 匯出：art/models/shared/cilantro/cilantro_<full|small|fragment>_<light|dark|soaked>.glb（3 造型 × 3 材質 = 9 個，每個 360–510 KB）
 - 原始檔：art/source/shared/tableware.blend（`cilantro` 集合；Blender 手工 v1 在 `cilantro_blender_v1` 集合，已排除不匯出）
 - 授權：Tripo Pro（可商用；使用者確認 2026-10-23）。證明：訂閱收據＋生成紀錄截圖，存本機 `art/source/licenses/tripo/`
+
+### env_xiaochi_table_a（餐館場景・台式小吃店，桌子）
+- 用途：取代 `scene_table`（M5）的外觀；餐館場景建模計畫第 1 階段（`docs/pipeline/餐館場景建模計畫.md`）
+- 風格基準：GPT Image 2 概念圖 C（Tripo Pro，2026-11-14，使用者選定）；只取顏色與構圖，造型照 Q 版
+- 管道：Blender 手工（2026-11-14），貼圖用程式產生
+- 原始檔：art/source/env/xiaochi/xiaochi.blend（`_preview` 集合不匯出）；貼圖 art/source/env/xiaochi/tex/
+- 尺寸與原點：和 `scene_table` 完全相同。桌面 9×6、厚 0.4，頂面 y = 0，原點在桌面中心，桌腳到 y = -7.5
+- 三角面：1,484（桌面 300、桌框 4×108、桌腳 4×188）；材質 2 個：`mat_env_xiaochi_table_top`（roughness 0.7）、`mat_env_xiaochi_table_frame`（0.72）
+- 貼圖：桌面 2048×1366（平均 #683A1F，灰階約 27%）、桌框 1024²（平均 #57301A）。木紋寬、低對比，最細的深色紋約 2.5 cm
+- UV：UVMap＋UV2（lightmap，匯出為 TEXCOORD_1）
+- 碰撞：無，沿用 `game.tscn` 的桌面碰撞
+- 灰階檢查（Blender 預覽燈光）：桌面 35%；淺色香菜比木頭亮約 0.11；深色香菜碎葉只亮 0.04（看得到但淡），等遊戲內燈光定案後用遊戲截圖複查
+- 匯出：art/models/env/xiaochi/env_xiaochi_table_a.glb
+- 授權：自製；概念圖由 Tripo Pro 方案產生
+
+### 小吃店場景套組 env_xiaochi（餐館場景第 2、3 階段）
+- 用途：取代 `scene_backdrop`；場景套組 `art/env/xiaochi/env_xiaochi.tscn`（介面見 `docs/pipeline/餐館場景建模計畫.md` 4.2）。只有外觀、沒有碰撞，房間尺寸和 `scene_backdrop` 相同
+- 管道：Blender 手工（2026-11-14，建模腳本在 xiaochi.blend 的 `env_builders` 文字區塊）＋3 個 Tripo 道具；貼圖用程式產生
+- 原始檔：art/source/env/xiaochi/xiaochi.blend、art/source/env/common/env_common.blend；貼圖 art/source/env/xiaochi/tex/（trim 2048、props 1024、Tripo 道具各 512）
+- 匯出（art/models/env/xiaochi/，三角面）：wall_tile_a 90、wall_tile_b 264、wall_corner_in 68、menu_board_a–d 各 44（牛肉麵、滷肉飯、水餃、酸辣湯；字型 jf open 粉圓 OFL，烘進貼圖）、stool_a 584（經典鏤空紅凳：4 支外八腳＋腳環）、condiment_set 604、shelf_a 824、counter_a 700（含 `SteamPoint`）、fan_a 876（`FanHead` 擺頭、`FanBlades` 旋轉，動畫 `fan_swing_loop` 8 秒）
+- 共用件（art/models/env/common/）：floor_plane 36、light_tube_a 164
+- Tripo 道具：env_xiaochi_prop_lucky_cat（1,480，高 15 cm）、env_xiaochi_prop_thermos（1,480，高 30 cm）、env_xiaochi_prop_cash_register（1,378，寬 30 cm，薄荷綠降飽和約 55%）。參考圖 GPT Image 2，Smart Mesh P1.0、1,500 面、Private，貼圖 512；原始檔 art/source/env/xiaochi/tripo_*.glb
+- 整套：約 13,100 三角面、10 種材質；每個網格都有 UV2
+- 盆栽 `env_xiaochi_plant_a` 取消（綠色會干擾找香菜）
+- 灰階（遊戲鏡頭、現行燈光）：桌面 0.42–0.45、地板 0.40、後牆磁磚 0.68–0.70。背景比桌面亮，待燈光以衰減／霧／暗角處理
+- 已知限制：遊戲鏡頭最遠時後牆只看到約地板上方 0.95 m，菜牌、電扇、日光燈只在全景看得到；每個 glb 內嵌自己的材質，匯入時應抽成共用材質
+- 授權：自製；Tripo 道具用 Pro 方案生成（證明存本機 art/source/licenses/tripo/）
