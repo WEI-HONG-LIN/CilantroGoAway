@@ -170,3 +170,17 @@
 - 匯出：art/models/shared/cilantro/cilantro_<full|small|fragment>_<light|dark|soaked>.glb（3 造型 × 3 材質 = 9 個，每個 360–510 KB）
 - 原始檔：art/source/shared/tableware.blend（`cilantro` 集合；Blender 手工 v1 在 `cilantro_blender_v1` 集合，已排除不匯出）
 - 授權：Tripo Pro（可商用；使用者確認 2026-10-23）。證明：訂閱收據＋生成紀錄截圖，存本機 `art/source/licenses/tripo/`
+
+### env_xiaochi_table_a（餐館場景・台式小吃店，桌子）
+- 用途：取代 `scene_table`（M5）的外觀；餐館場景建模計畫第 1 階段（`docs/pipeline/餐館場景建模計畫.md`）
+- 風格基準：GPT Image 2 概念圖 C（Tripo Pro，2026-11-14，使用者選定）；只取顏色與構圖，造型照 Q 版
+- 管道：Blender 手工（2026-11-14），貼圖用程式產生
+- 原始檔：art/source/env/xiaochi/xiaochi.blend（`_preview` 集合不匯出）；貼圖 art/source/env/xiaochi/tex/
+- 尺寸與原點：和 `scene_table` 完全相同。桌面 9×6、厚 0.4，頂面 y = 0，原點在桌面中心，桌腳到 y = -7.5
+- 三角面：1,484（桌面 300、桌框 4×108、桌腳 4×188）；材質 2 個：`mat_env_xiaochi_table_top`（roughness 0.7）、`mat_env_xiaochi_table_frame`（0.72）
+- 貼圖：桌面 2048×1366（平均 #683A1F，灰階約 27%）、桌框 1024²（平均 #57301A）。木紋寬、低對比，最細的深色紋約 2.5 cm
+- UV：UVMap＋UV2（lightmap，匯出為 TEXCOORD_1）
+- 碰撞：無，沿用 `game.tscn` 的桌面碰撞
+- 灰階檢查（Blender 預覽燈光）：桌面 35%；淺色香菜比木頭亮約 0.11；深色香菜碎葉只亮 0.04（看得到但淡），等遊戲內燈光定案後用遊戲截圖複查
+- 匯出：art/models/env/xiaochi/env_xiaochi_table_a.glb
+- 授權：自製；概念圖由 Tripo Pro 方案產生
