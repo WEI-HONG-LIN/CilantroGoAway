@@ -272,3 +272,13 @@
 - 沒有做料理本體的彈跳：碗和食物是物理物件，縮放會讓碰撞和外觀對不上，所以料理完成感改用光圈加閃光表現
 - Shader：shaders/vfx_clear_star.gdshader、vfx_clear_ring.gdshader
 - 授權：自製
+
+## M6 程式暫代的視覺資產（2026-11-15）
+
+| 資產 | 位置 | 負責 | 備註 |
+|---|---|---|---|
+| 香菜邊緣光材質 | `shaders/cilantro_rim.gdshader`（程式在執行時把美術的香菜 StandardMaterial3D 換成這個，沿用同一張貼圖） | 程式（M6 暫代 3D 美術） | 企劃書 3.5；強度 `LevelData.cilantro_rim_strength`、方向由 `CilantroContrast` 依畫面決定 |
+| 香菜輪廓描邊 | `shaders/cilantro_outline.gdshader` | 程式（M6 暫代） | 反轉外殼，2.5 px（1080p），有深度測試不透視 |
+| 沉底香菜湯面綠影 | `scripts/sunken_cue.gd`（程式內建 shader） | 程式 | 企劃書 3.5「沉底的，湯面上要看得到模糊的綠色影子」 |
+| 挑除碎葉粒子 | `CilantroPiece.make_leaf_bits()`（程式產生，5 片淺綠小葉片） | 程式（M6 暫代 3D 美術） | 企劃書 4.4；3D 美術可換成正式粒子 |
+| 提示第 1 段大範圍煙、第 3 段往上捲煙絲 | `scripts/hint_smoke.gd`（沿用 `art/vfx/hint_smoke*.tscn`，放大／沿螺旋移動發射點） | 程式（M6 暫代 3D 美術） | 企劃書 8.1；3D 美術可另做正式特效 |
