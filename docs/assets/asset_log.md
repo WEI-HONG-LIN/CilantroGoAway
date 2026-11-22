@@ -141,8 +141,11 @@
 - 管道：Blender 手工（Claude 透過 Blender MCP 以 Python 建立，2026-10-23）
 - 原始檔：art/source/shared/tableware.blend
 - 匯出：art/models/tools/tool_chopsticks.glb、tool_tweezers.glb、tool_spoon.glb
-- 三角面數：712／372／1,228；材質各 2 個（主色＋藍色）
+- 三角面數：712／372／1,496；材質各 2 個（主色＋藍色）
 - 動畫：筷子、鑷子各有 `grip`（12 格）
+- 2026-10-25 改版（使用者回饋）：
+  - 筷子改成兩根獨立的直筷，尾端不相連。支點在離筷尖 1.5 單位（手握處），根節點原點在筷尖。`grip` 只動 `chopstick_R`（上筷，第 1 格張開、第 6 格夾合、第 12 格張開），`chopstick_L`（下筷）固定。
+  - 湯匙改成一體成形的中式湯匙：橢圓匙面平順收窄成匙柄，匙柄末端上翹，厚度 0.3 cm。原點在匙面中心。
 - 授權：自製，無第三方授權問題
 
 ### decoy_scallion_a／_b／_c
@@ -170,3 +173,60 @@
 - 匯出：art/models/shared/cilantro/cilantro_<full|small|fragment>_<light|dark|soaked>.glb（3 造型 × 3 材質 = 9 個，每個 360–510 KB）
 - 原始檔：art/source/shared/tableware.blend（`cilantro` 集合；Blender 手工 v1 在 `cilantro_blender_v1` 集合，已排除不匯出）
 - 授權：Tripo Pro（可商用；使用者確認 2026-10-23）。證明：訂閱收據＋生成紀錄截圖，存本機 `art/source/licenses/tripo/`
+
+### scene_table／scene_backdrop／scene_discard_dish／scene_temp_plate（場景，M5）
+- 用途：企劃書 4.2「場景」：桌面、背景、棄置碟、暫放盤。取代 `game.tscn` 的灰盒
+- 管道：Blender 手工（Claude 透過 Blender MCP 以 Python 建立，2026-10-28）；貼圖用程式產生（木紋、磁磚、地磚、紅木牌），存 art/source/scene/tex/
+- 原始檔：art/source/scene/scene.blend（`scene` 集合）
+- 尺寸與原點（1 單位 = 10 cm，對齊目前灰盒，換模型不用改位置）：
+  - `scene_table`：桌面 9×6、厚 0.4，含桌框與四支桌腳（落地在 y = -7.5）。原點在桌面中心、y = 0 就是桌面。1,052 三角面，木紋貼圖 2048×1366
+  - `scene_backdrop`：小吃店角落。白磁磚牆裙、米色牆、深色木飾條、8 塊沒有文字的紅木牌、紅磚色地磚，加 2 張紅色塑膠椅（`scene_stool_a`／`_b`）。地板 y = -7.5，後牆在桌子後方 11 單位，左右牆在 x = ±15。牆 158 三角面、椅子各 732
+  - `scene_discard_dish`：白瓷小碟、藍邊，碟心畫紅色禁止符號。半徑 0.4、高 0.1，原點在中心（底部 y = -0.05），和灰盒圓柱一樣
+  - `scene_temp_plate`：白琺瑯托盤、藍邊。2×1.4、高 0.1，原點在中心，盤面在 y = +0.05（`temp_plate.gd` 的 `surface_height`）
+- 碰撞：都只有外觀，沿用 `game.tscn` 現有的碰撞形狀（大小相同）
+- 鍵光從左前上方打（見下方燈光），左右牆的影子不會落到桌上
+- 匯出：art/models/scene/scene_table.glb、scene_backdrop.glb、scene_discard_dish.glb、scene_temp_plate.glb
+- 授權：自製，無第三方授權問題
+
+### decoy_greens_a／_b（青菜碎葉誘餌，M5）
+- 用途：誘餌（企劃書 4.2「蔥花、青菜碎葉」），全遊戲共用
+- 管道：Blender 手工（2026-10-28），原始檔 art/source/scene/scene.blend（`decoys` 集合）
+- 造型：撕下來的青菜葉片，圓滑葉緣、一邊是撕口，有淡色主脈和側脈，沒有分叉。A 1.2×1.6 cm、B 0.8×1.0 cm，厚 0.6 mm，葉面微彎
+- 顏色：黃綠 sRGB (112,163,51)、葉脈淡綠，貼圖 256²（art/source/scene/tex/decoy_greens.png）。比香菜淺、偏黃；和香菜的彩色／灰階對照圖已確認可分辨（靠圓滑葉緣與葉脈）
+- 三角面數：各 896；碰撞 `-convcolonly` 凸包 ×1；浮力取樣點 `Buoyancy_01`–`_04`
+- 匯出：art/models/shared/decoy_greens_a.glb、_b.glb
+- 授權：自製，無第三方授權問題
+
+### table_lighting（燈光預設，M5）
+- 用途：企劃書 4.1「柔和主光、環境補光、接觸陰影」
+- 檔案：art/lighting/table_lighting.tscn（取代 `game.tscn` 的 WorldEnvironment 與 DirectionalLight3D，一個場景只能有一個 WorldEnvironment）
+- 內容：
+  - KeyLight：暖白方向光，從左前上方 50° 打下，柔邊陰影（angular distance 1.5°），陰影偏移已依 10 cm 單位調小
+  - FillLight：冷色補光，從右前方低角度，不投影
+  - LampLight：桌子正上方的暖色點光，像小吃店吊燈
+  - Environment：環境光、SSAO（接觸陰影，半徑 0.6）、輕微光暈、飽和度 1.05
+  - CameraAttributesPractical：遠景景深，後面的牆和椅子微糊，讓視線集中在料理
+- 授權：自製
+
+### 臭味煙霧特效（hint_smoke，M5）
+- 用途：企劃書 8.1「提示：臭味煙霧」的外觀。煙霧粒子與 shader 由 3D 美術製作，選香菜與定位由程式負責
+- 檔案（3 種藏法各一個）：
+  - art/vfx/hint_smoke.tscn：黏在食物上，從香菜附近往上冒
+  - art/vfx/hint_smoke_seep.tscn：藏在背面，從食物底下往四周滲出再往上飄。環形發射半徑 0.2–0.3，請依食物半徑縮放節點
+  - art/vfx/hint_smoke_bubbles.tscn：沉在湯底，放在湯面高度，湯面冒臭泡泡，泡泡破掉時冒小口煙
+- 結構：根節點 Node3D，底下是 `Puffs`（卡通雲朵煙團）、`Wisps`（漫畫式彎曲臭味線），湯底版多一個 `Bubbles`。都是 GPUParticles3D，`local_coords` 開著，所以把節點掛在食物底下，煙就會跟著食物走
+- 開始：加進場景樹就開始冒。結束（6 秒到了或香菜被挑掉）：把所有 GPUParticles3D 的 `emitting` 設成 false，等 2.5 秒讓粒子淡完再刪節點
+- 外觀：淡紫灰 sRGB (184,163,204)，描邊深紫，半透明（煙團 0.55、線 0.75），不寫深度、不投影，不會擋住香菜。不用綠色
+- Shader：shaders/vfx_hint_smoke_puff.gdshader、vfx_hint_smoke_wisp.gdshader、vfx_hint_bubble.gdshader（形狀都用數學畫，不用貼圖）
+- 授權：自製
+
+### 通關慶祝（clear_celebration，M5）
+- 用途：企劃書 4.3「通關時：星星、粒子與短暫的料理完成動畫」
+- 檔案：art/vfx/clear_celebration.tscn，放在料理中心、桌面高度
+- 播放：`$AnimationPlayer.play("play")`，長 1.8 秒。內容：
+  - `Ring`：從料理底下擴散的一圈金光（0.8 秒，半徑 0.2 → 1.8）
+  - `Stars`：18 顆金色圓角星星往上噴，轉著落下（one shot）
+  - `Sparkles`：24 個四芒小閃光在料理周圍閃（one shot）
+- 沒有做料理本體的彈跳：碗和食物是物理物件，縮放會讓碰撞和外觀對不上，所以料理完成感改用光圈加閃光表現
+- Shader：shaders/vfx_clear_star.gdshader、vfx_clear_ring.gdshader
+- 授權：自製
