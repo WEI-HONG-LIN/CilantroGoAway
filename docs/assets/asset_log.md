@@ -299,3 +299,138 @@
 - 灰階（遊戲鏡頭、現行燈光）：桌面 0.42–0.45、地板 0.40、後牆磁磚 0.68–0.70。背景比桌面亮，待燈光以衰減／霧／暗角處理
 - 已知限制：遊戲鏡頭最遠時後牆只看到約地板上方 0.95 m，菜牌、電扇、日光燈只在全景看得到；每個 glb 內嵌自己的材質，匯入時應抽成共用材質
 - 授權：自製；Tripo 道具用 Pro 方案生成（證明存本機 art/source/licenses/tripo/）
+
+### 新料理共用事項（meatball_soup／century_egg_tofu／gua_bao／oyster_misua／pho，2026-11-22～27）
+- dish_id 是暫定名，待遊戲企劃確認。物件 ID、掛點名稱也是 3D 美術的提案。總清單與接手事項見 `docs/assets/new_dishes_summary.md`。
+- Tripo 管道：同滷肉飯（Claude 透過 Claude in Chrome 操作 Tripo 網頁版；Image 分頁 GPT Image 2、上傳風格基準圖 `art/source/style_anchor/beef_noodle_soup_beef_chunk_a.png`；Smart Mesh「P1.0 - Fast」三角面 3000＋ Texture；Privacy：Private；Export GLB 512）。
+- 2026-11-22 實際價格：GPT Image 2 一批 2 張 40 點、P1.0 35 點、Texture 20 點，每個 Tripo 物件約 55 點＋參考圖。
+- Task ID：網頁版不顯示，以 Model Info 截圖為準，存本機 `art/source/licenses/tripo/<物件 ID>_info.png`。
+- 授權：Tripo Pro（可商用，方案到期 2027-10-23）；Blender 手工物件為自製。
+- 真實照片參考：`art/source/<dish_id>/photo_ref/`（Wikimedia Commons，來源網址與授權在同資料夾 `sources.txt`），只當內部比對，不上傳 GitHub、不當 Tripo 輸入。
+- 共通的 Blender 修改：合併重複頂點、重算法線、縮放（1 單位 = 10 cm）、原點在底部中心、壓平最底 2–3%、減面到 ≤ 3,000 三角面、凸包碰撞 `-convcolonly`（約 100–200 面）；掛點 Empty 的 Z 軸朝外（匯出後是 Godot +Y）；進湯物件 4–8 個 `Buoyancy_*`。
+- Blender 原始檔：`art/source/<dish_id>/<dish_id>.blend`（`raw` 集合是 Tripo 原檔，`food` 集合是清理後；`dish_preview` 只是預覽）；共用腳本 `art/source/_tools/bl_helpers.py`。
+- 預覽圖（含真實照片對照）：`art/source/<dish_id>/preview_compare.png`。
+
+### 容器（Blender，新料理）
+- 管道：Blender 手工；複製 `tableware.blend` 既有的碗盤再縮放（共用回紋貼圖與顏色，流程文件 6.1；D-20261023-06）；碰撞 `<物件>-colonly`（凹面，只能用在固定物件）
+- 原始檔：art/source/shared/tableware.blend
+
+| 物件 ID | 料理 | 來源形狀 | 尺寸（cm） | 三角面 | 匯出 |
+|---|---|---|---|---|---|
+| bowl_meatball_soup | meatball_soup | bowl_noodle 縮放 | 直徑 14.2、高 7.0 | 3,072 | art/models/meatball_soup/bowl_meatball_soup.glb |
+| plate_century_egg_tofu | century_egg_tofu | plate_dumpling_small 改成圓角長方（超橢圓 n=5） | 15.6×10.3×2.0 | 2,688 | art/models/century_egg_tofu/plate_century_egg_tofu.glb |
+| plate_gua_bao | gua_bao | plate_dumpling 縮放 | 直徑 20、高 2.3 | 2,688 | art/models/gua_bao/plate_gua_bao.glb |
+| bowl_oyster_misua | oyster_misua | bowl_noodle 縮放 | 直徑 13.1、高 7.0 | 3,072 | art/models/oyster_misua/bowl_oyster_misua.glb |
+| bowl_pho | pho | bowl_noodle 放大 | 直徑 21.2、高 9.0 | 3,072 | art/models/pho/bowl_pho.glb |
+
+### 貢丸湯食物（meatball_soup，2026-11-22）
+- 參考圖：art/source/meatball_soup/ref_meatball.png、ref_fried_shallot.png（prompt 照範本 2.1，加上風格基準圖前綴）
+- 原始檔：art/source/meatball_soup/tripo_meatball.glb、tripo_fried_shallot.glb；Blender 檔 art/source/meatball_soup/meatball_soup.blend
+- 使用點數：參考圖 2 批 80 ＋ 3D 2×35 ＋ 貼圖 2×20 = 190 點
+
+| 物件 ID | 中文名 | 管道 | 尺寸（cm） | 三角面／貼圖 | 碰撞 | 掛點 | 浮力點 | Model Info 生成時間 |
+|---|---|---|---|---|---|---|---|---|
+| food_meatball_whole | 貢丸 | Tripo | 3.4×3.4×2.8 | 2,974／512² | 凸包 ×1 | `Anchor_Meatball_Top_01`、`_Side_01`、`_Bottom_01` | 6 | 2026-11-22 10:58:10 |
+| food_meatball_half | 半顆貢丸（切面朝下） | 同一個 Tripo 模型用 Blender 切半、補切面（材質 `meatball_inside`） | 2.8×3.4×1.7 | 1,766／512²＋純色 | 凸包 ×1 | `Anchor_MeatballHalf_Top_01`（圓頂）、`_Side_01`、`_Bottom_01`（切面） | 4 | 同上 |
+| food_fried_shallot | 油蔥酥小堆 | Tripo | 2.6×2.6×1.0 | 2,885／512² | 凸包 ×1 | `Anchor_FriedShallot_Top_01`、`_Bottom_01` | 4 | 2026-11-22 11:09:40 |
+| decoy_celery_a／_b／_c | 芹菜末（C 形薄片／短弧塊／小方丁） | Blender 手工 | 0.8×0.4×0.2／0.6×0.2×0.3／0.5×0.35×0.3 | 708／708／60，雙材質純色 | 凸包 ×1 | — | 4 | — |
+
+- 貼圖修色：Tripo 貢丸偏鮭魚橘，已在 Blender 降飽和、偏灰粉褐（對照真實照片）；油蔥酥原本亮橘，已改成金黃褐。
+- 芹菜末顏色：外皮 sRGB (150,196,112)、切面 (208,228,172)，灰階約 0.67／0.85；香菜貼圖灰階中位數 0.21（浸濕）–0.41（亮綠），差 ≥ 0.25，輪廓是 C 形／方丁，和香菜的扇形葉不同。
+- 建議密度：貢丸 1.05（略沉、會在湯裡半浮）、半顆貢丸 1.05、油蔥酥 0.5（浮在湯面）、芹菜末 0.7（浮）。
+- 半顆貢丸切面朝下比較穩；要看到切面，玩家要翻面。
+
+### 皮蛋豆腐食物（century_egg_tofu，2026-11-22）
+- 參考圖：art/source/century_egg_tofu/ref_century_egg_wedge_a.png、_b.png（同一批 2 張，各轉一個 3D）
+- 原始檔：art/source/century_egg_tofu/tripo_century_egg_wedge_a.glb、_b.glb；Blender 檔 art/source/century_egg_tofu/century_egg_tofu.blend
+- 使用點數：參考圖 1 批 40 ＋ 3D 2×35 ＋ 貼圖 2×20 = 150 點（第 3 塊改用 Blender 從 A 變形，省 95 點）
+
+| 物件 ID | 中文名 | 管道 | 尺寸（cm） | 三角面／貼圖 | 碰撞 | 掛點 | Model Info 生成時間 |
+|---|---|---|---|---|---|---|---|
+| food_century_egg_wedge_a | 皮蛋塊 A（厚楔形） | Tripo | 3.5×3.6×3.1 | 2,980／512² | 凸包 ×1 | `Anchor_EggWedgeA_Top_01`、`_Side_01`、`_Bottom_01` | 2026-11-22 11:42:06 |
+| food_century_egg_wedge_b | 皮蛋塊 B（半月片，切面朝上） | Tripo | 4.0×3.4×2.0 | 2,902／512² | 凸包 ×1 | `Anchor_EggWedgeB_*`（同上） | 2026-11-22 11:38:57 |
+| food_century_egg_wedge_c | 皮蛋塊 C（小塊） | Blender：A 縮 0.8、鏡像、轉 70° | 3.0×2.7×2.5 | 2,980／共用 A 貼圖 | 凸包 ×1 | `Anchor_EggWedgeC_*`（同上） | 同 A |
+| food_tofu_block | 豆腐塊 | Blender 手工（圓角方塊，頂面微凸） | 8.0×6.0×3.5 | 300／純色 | 凸包 ×1 | `Anchor_TofuBlock_Top_01`–`_03`、`_Side_01`、`_Bottom_01` | — |
+| food_bonito_flake_a／_b／_c | 柴魚片 | Blender 手工（捲曲薄片，厚 1.2 mm，順紋深色條） | 2.3×1.5×1.1／1.4×1.4×1.1／1.7×1.1×0.7 | 476，雙材質純色 | 凸包 ×1 | — | — |
+| deco_sauce_film | 醬汁膜（不能互動，放在豆腐下） | Blender 手工 | 9.1×6.1×0.1 | 160／純色 | 無 | — | — |
+
+- 皮蛋貼圖重新上色（對照真實照片）：Tripo 的蛋白偏紅橘，改成深茶褐 sRGB 約 (78,44,22)；蛋黃改成深石板灰 (44,48,50)（不帶綠），外圈與中心是奶油色 (212,204,156)。蛋黃灰階約 0.18、外圈約 0.79，香菜 0.21–0.41；輪廓是楔形／半月，和香菜的扇形葉不同。
+- 建議密度：皮蛋 1.1、豆腐 1.05（軟，建議高摩擦低彈性）、柴魚片 0.4（建議高阻力、低重力影響，程式端調）。
+- 豆腐是一整塊，不切；香菜可放在豆腐頂面（3 個掛點）。
+
+### 刈包食物（gua_bao，2026-11-22）
+- 參考圖：art/source/gua_bao/ref_bun.png、ref_pork_belly_a.png、_b.png（同一批）、ref_suan_cai.png
+- 原始檔：art/source/gua_bao/tripo_bun.glb、tripo_pork_belly_a.glb、_b.glb、tripo_suan_cai.glb；Blender 檔 art/source/gua_bao/gua_bao.blend
+- 使用點數：參考圖 4 批 160（三層肉第 1 批太像巧克力蛋糕，重抽 1 次）＋ 3D 4×35 ＋ 貼圖 4×20 = 380 點
+
+| 物件 ID | 中文名 | 管道 | 尺寸（cm） | 三角面／貼圖 | 碰撞 | 掛點 | Model Info 生成時間 |
+|---|---|---|---|---|---|---|---|
+| food_gua_bao_bun | 刈包皮（合起來，一整個剛體） | Tripo | 7.5×9.5×3.4 | 2,959／512² | 凸包 ×1 | `Anchor_GuaBao_Top_01`、`_Bottom_01` | 2026-11-22 11:51:46 |
+| food_gua_bao_bun_bottom | 刈包皮下半（可打開版） | 同一個 Tripo 模型在接縫高度（1.8 cm）切開、補內面（材質 `bun_inside`） | 7.5×9.5×1.8 | 2,199 | 凸包 ×1 | `Anchor_BunBottom_Inside_01`、`_02`（內面，放餡料處）、`_Bottom_01`；`Hinge`（鉸鏈線，見下） | 同上 |
+| food_gua_bao_bun_top | 刈包皮上半（蓋子） | 同上 | 7.4×9.5×1.6 | 1,388 | 凸包 ×1 | `Anchor_BunTop_Inside_01`（內面）、`_Top_01` | 同上 |
+| food_pork_belly_a／_b | 三層肉片（波浪／較平） | Tripo（同一批 2 張各轉一個） | 7.0×3.3×1.8／7.0×2.9×1.8 | 2,974／2,950，512² | 凸包 ×1 | `Anchor_PorkBelly_Top_01`、`_Side_01`、`_Bottom_01` | 11:57:24／12:01:19 |
+| decoy_suan_cai_a／_b／_c | 酸菜碎（整堆／半堆／小塊） | a 是 Tripo；b、c 用 Blender 從 a 切出來 | 3.6×3.6×1.4／2.0×3.6×1.4／1.4×2.0×1.3 | 2,975／1,803／820，512² | 凸包 ×1 | — | 12:06:04 |
+| food_peanut_powder | 花生粉堆 | Blender 手工（顆粒用程式繪製的貼圖，俯視投影 UV） | 4.7×3.6×1.1 | 960／512² | 凸包 ×1 | `Anchor_PeanutPowder_Top_01`、`_02` | — |
+
+- 可打開的刈包：下半原點在底部中心；**上半原點就在鉸鏈線上**（刈包皮 +X 側、接縫高度），所以把上半放在下半的 `Hinge` 位置、繞 Y 軸（Blender Y = Godot −Z）轉正角度就會往上翻開。預覽圖是轉 115°。合起來的 `food_gua_bao_bun` 給不需要打開的關卡用。
+- 貼圖修色：刈包皮原本偏黃，改成奶白；三層肉肥肉帶改成淡象牙粉 (226,196,166)、瘦肉暖紅褐 (146,78,50)；酸菜原本是鮮黃（像起司通心粉），改成淡黃橄欖色，灰階中位數 0.69（p10 0.61），香菜 0.21–0.41，輪廓是碎塊堆，不是葉片。
+- 建議密度：刈包皮 0.5（軟、輕）、三層肉 1.0、酸菜 0.8、花生粉 0.6。
+- 和真實照片比對（art/source/gua_bao/photo_ref/）：刈包皮、三層肉的形狀與顏色相符；真實的酸菜是深橄欖綠的細絲，和香菜灰階太接近，所以刻意改成淡黃橄欖色、做成碎塊堆（遊戲辨識度優先，偏離寫實）。
+
+### 蚵仔麵線食物（oyster_misua，第 1 部分，2026-11-22）
+- 用 11/22 剩下的點數先做蚵仔、大腸各 1 個；第 2 個造型、麵線團 ×2 在 11/27 做（見第 2 部分）。
+- 參考圖：art/source/oyster_misua/ref_oyster.png、ref_intestine.png；原始檔 tripo_oyster.glb、tripo_intestine.glb；Blender 檔 art/source/oyster_misua/oyster_misua.blend
+- 使用點數：參考圖 2 批 80 ＋ 3D 2×35 ＋ 貼圖 2×20 = 190 點
+
+| 物件 ID | 中文名 | 管道 | 尺寸（cm） | 三角面／貼圖 | 碰撞 | 掛點 | 浮力點 | Model Info 生成時間 |
+|---|---|---|---|---|---|---|---|---|
+| food_oyster_a | 蚵仔（裹粉） | Tripo | 3.2×2.0×1.1 | 2,971／512² | 凸包 ×1 | `Anchor_Oyster_Top_01`、`_Bottom_01` | 4 | 2026-11-22 12:37:59 |
+| food_intestine_a | 大腸段（中空） | Tripo（模型本身就是真的中空管） | 1.9×2.6×1.8（管軸沿 Blender Y＝Godot −Z） | 2,930／512² | **凸包 ×4**（`food_intestine_a_wall1`–`4-convcolonly`，繞管軸分 4 片管壁，中間的洞是空的） | `Anchor_Intestine_Top_01`、`_Bottom_01`、`_Inside_01`（管洞正中央，Z 軸沿管軸，給「塞在大腸裡」的香菜用） | 4 | 2026-11-22 12:42:42 |
+| food_garlic_paste | 蒜泥小堆 | Blender 手工 | 1.8×1.7×0.6 | 528／256² | 凸包 ×1 | `Anchor_GarlicPaste_Top_01` | 4 | — |
+| deco_misua_strands_a／_b／_c | 散麵線（裝飾，不能互動） | Blender 手工（曲線轉網格，紅麵線色） | 長 6.1–8.5，粗 0.13 | 576–1,152 | 無 | — | — | — |
+
+- 和真實照片比對（art/source/oyster_misua/photo_ref/）：蚵仔是灰米色本體＋深灰荷葉邊，原本偏黃，已降飽和；大腸原本偏橘，已調成較暗的焦糖褐。
+- 大腸的 4 片凸包碰撞會留出中間的洞；程式要把這 4 個碰撞形狀都搬到同一個 RigidBody 底下。
+- 建議密度：蚵仔 1.05、大腸 1.0（濃湯裡半浮）、蒜泥 1.0。
+- 蚵仔麵線的湯是不透明的勾芡濃湯，需要程式另外做不透明濃湯 shader（沉在湯裡的物件看不到，要靠提示或撈起來）。
+
+### 越南河粉食物（pho，2026-11-27）
+- 參考圖：art/source/pho/ref_thai_basil.png、ref_mint.png、ref_beef.png、ref_noodle.png、ref_lime.png；原始檔 tripo_*.glb；Blender 檔 art/source/pho/pho.blend
+- 真實照片：art/source/pho/photo_ref/（牛肉河粉 3 張、九層塔、薄荷、檸檬角；來源與授權見 sources.txt）
+- 使用點數：3D 5×35 ＋ 貼圖 5×20 = 275 點（這次 GPT Image 2 參考圖在免費額度內，0 點；河粉參考圖第 1 批像烏龍麵，重抽 1 次也是 0 點）。第 2 種造型全部用 Blender 改，沒有另外生成。
+
+| 物件 ID | 中文名 | 管道 | 尺寸（cm） | 三角面／貼圖 | 碰撞 | 掛點 | 浮力點 | Model Info 生成時間 |
+|---|---|---|---|---|---|---|---|---|
+| food_pho_beef_a | 牛肉片 A | Tripo，Blender 壓薄到 0.5 cm | 4.5×6.0×0.5 | 2,975／512² | 凸包 ×1 | `Anchor_PhoBeef_Top_01`、`_Bottom_01` | 4 | 2026-11-27 21:03:16 |
+| food_pho_beef_b | 牛肉片 B | Blender：A 切掉一端、縮 0.9、轉 35° | 4.6×4.4×0.4 | 2,115 | 凸包 ×1 | 同上 | 4 | 同 A |
+| food_pho_noodle_a | 河粉團 A（寬扁麵） | Tripo | 5.1×6.0×2.3 | 2,975／512² | 凸包 ×1 | `Anchor_PhoNoodle_Top_01`、`_Side_01`、`_Bottom_01` | 6 | 2026-11-27 21:08:32 |
+| food_pho_noodle_b | 河粉團 B | Blender：A 非等比縮放、轉 80° | 5.7×4.3×1.9 | 2,975 | 凸包 ×1 | 同上 | 6 | 同 A |
+| food_lime_wedge | 檸檬角 | Tripo | 4.2×3.4×2.6 | 2,759／512² | 凸包 ×1 | `Anchor_LimeWedge_Top_01`、`_Side_01`、`_Bottom_01` | 4 | 2026-11-27 21:13:04 |
+| decoy_thai_basil_a | 九層塔葉（誘餌） | Tripo＋減面＋PCA 壓平（照香菜流程） | 1.9×4.5×0.25 | 596／512² | 凸包 ×1 | — | 4 | 2026-11-27 20:54:44 |
+| decoy_thai_basil_b | 九層塔葉 B | Blender：A 縮 0.75、葉面微捲、轉 20° | 1.6×3.2×0.33 | 596 | 凸包 ×1 | — | 4 | 同 A |
+| decoy_mint_a | 薄荷葉（誘餌） | Tripo＋減面＋PCA 壓平 | 2.2×3.4×0.3 | 596／512² | 凸包 ×1 | — | 4 | 2026-11-27 20:59:04 |
+| decoy_mint_b | 薄荷葉 B | Blender：A 縮 0.78、葉面微捲、轉 −25° | 1.8×2.4×0.39 | 596 | 凸包 ×1 | — | 4 | 同 A |
+| food_bean_sprout_a／_b／_c | 豆芽 | Blender 手工（11/22 已做，補回掛點與浮力點） | 4.5–5.6 長 | 564 | 凸包 ×1 | `Anchor_BeanSprout_Top_01` | 4 | — |
+| bowl_pho | 大湯碗 | Blender（容器表） | 直徑 21.2、高 9.0 | 3,072 | 凹面 `-colonly` | — | — | — |
+
+- **和香菜的辨識度（這道最關鍵）：**
+  - 九層塔：重新上色成深墨綠＋紫色葉柄，葉片灰階約 0.15（p90 0.15），葉柄約 0.2；形狀是窄長尖葉、全緣（沒有鋸齒和裂片）。
+  - 薄荷：重新上色成亮黃綠，灰階 p10 0.67、中位數 0.72；形狀是橢圓皺葉、細鋸齒。
+  - 香菜貼圖灰階：亮綠 0.40、深綠 0.32、浸濕 0.21。所以**河粉關卡建議只用亮綠香菜**（cilantro_*_light）：九層塔差 0.25、薄荷差 0.27，兩者都達到 M6 的 ≥0.25。若用深綠或浸濕香菜，九層塔的亮度差會不足（只剩 0.06–0.17），這時只能靠形狀區分，或請程式的 CilantroContrast 描邊加強。
+  - 灰階對照圖：art/source/pho/preview_parts_gray.png（上排彩色、下排灰階，最右是亮綠香菜）。
+- 修色：牛肉片中心的粉紅太亮，已降飽和成灰褐帶淡粉（對照真實照片）；檸檬角原本太鮮黃綠，已降飽和；河粉偏暖白。
+- 建議密度：牛肉片 1.05、河粉團 1.02（湯裡半沉）、檸檬角 0.95、九層塔／薄荷 0.6（浮在湯面）、豆芽 0.8。
+
+### 蚵仔麵線食物（oyster_misua，第 2 部分，2026-11-27）
+- 參考圖：art/source/oyster_misua/ref_misua_clump.png；原始檔 tripo_misua_clump.glb
+- 使用點數：3D 35 ＋ 貼圖 20 = 55 點（參考圖在免費額度內 0 點）；其餘 3 個用 Blender 改，0 點
+
+| 物件 ID | 中文名 | 管道 | 尺寸（cm） | 三角面／貼圖 | 碰撞 | 掛點 | 浮力點 | Model Info 生成時間 |
+|---|---|---|---|---|---|---|---|---|
+| food_misua_clump_a | 麵線團 A | Tripo | 5.7×4.9×1.6 | 2,974／512² | 凸包 ×1 | `Anchor_MisuaClump_Top_01`、`_Bottom_01` | 6 | 2026-11-27 21:21:11 |
+| food_misua_clump_b | 麵線團 B | Blender：A 非等比縮放、轉 70° | 4.1×4.4×1.9 | 2,974 | 凸包 ×1 | 同上 | 6 | 同 A |
+| food_oyster_b | 蚵仔 B | Blender：A 鏡像、縮 0.85、微彎、轉 40° | 2.5×2.4×1.1 | 2,971 | 凸包 ×1 | `Anchor_Oyster_Top_01`、`_Bottom_01` | 4 | 同 food_oyster_a |
+| food_intestine_b | 大腸段 B（短胖） | Blender：A 沿管軸縮 0.72、徑向放大 1.08 | 2.0×1.9×2.0 | 2,930 | 凸包 ×4（`food_intestine_b_wall1`–`4-convcolonly`，中空） | `Anchor_Intestine_Top_01`、`_Bottom_01`、`_Inside_01` | 4 | 同 food_intestine_a |
+
+- 麵線團貼圖：Tripo 原本是橘紅色，對照真實照片改成淡褐棕。
+- 建議密度：麵線團 1.03（勾芡濃湯裡半沉）。
